@@ -9,6 +9,8 @@ import Logo from '@/components/Logo';
 import { PageContainer } from '@/components/PageContainer';
 import { ThemedText } from '@/components/ThemedText';
 
+import { useThemeColor } from '@/hooks/useThemeColor';
+
 import { supabase } from '../lib/supabase';
 
 // Tells Supabase Auth to continuously refresh the session automatically if
@@ -29,6 +31,8 @@ export default function Auth() {
 	const [loading, setLoading] = useState(false);
 
 	const router = useRouter();
+
+	const highlightColor = useThemeColor({}, 'highlightColor');
 
 	async function signInWithEmail() {
 		setLoading(true);
@@ -72,18 +76,22 @@ export default function Auth() {
 		<SafeAreaView style={{ flex: 1 }}>
 			<PageContainer>
 				<View style={styles.container}>
-					<View style={[styles.verticallySpaced, styles.mt20]}>
-						<Logo />
-					</View>
-					<View style={[styles.verticallySpaced, styles.mt20]}>
+					<Logo
+						style={{
+							fontSize: 50,
+							lineHeight: 50,
+							marginHorizontal: 'auto',
+						}}
+					/>
+					<View
+						style={[styles.verticallySpaced, styles.inputContainer]}
+					>
 						<Input
 							onChangeText={(text: string) => setEmail(text)}
 							value={email}
 							placeholder='E-mail'
 							autoCapitalize={'none'}
 						/>
-					</View>
-					<View style={styles.verticallySpaced}>
 						<Input
 							onChangeText={(text: string) => setPassword(text)}
 							value={password}
@@ -91,31 +99,32 @@ export default function Auth() {
 							placeholder='Senha'
 							autoCapitalize={'none'}
 						/>
-						<ThemedText>Esqueceu a senha?</ThemedText>
 					</View>
 					<View
 						style={[
-							styles.horizontalFlex,
+							styles.buttonsContainer,
 							styles.verticallySpaced,
-							styles.mt20,
 						]}
 					>
 						<Button
 							text='Entrar'
+							textType='small'
 							disabled={loading}
 							onPress={() => signInWithEmail()}
+							type='primary'
+							style={{ width: '100%' }}
 						/>
-						<ThemedText>
-							Não tem conta? Crie uma
-							<ThemedText
-								disabled={loading}
-								onPress={() => signInWithEmail()}
-								style={{}}
-							>
-								{' '}
-								conta agora.
-							</ThemedText>
-						</ThemedText>
+						<Button
+							text='Esqueceu a senha?'
+							disabled={loading}
+							onPress={() => signUpWithEmail()}
+							style={{
+								borderWidth: 0,
+								width: 'auto',
+								minWidth: 0,
+							}}
+							textProps={{ style: { color: highlightColor } }}
+						/>
 					</View>
 				</View>
 				<Button
@@ -123,6 +132,7 @@ export default function Auth() {
 					disabled={loading}
 					onPress={() => signUpWithEmail()}
 					style={{ borderWidth: 0 }}
+					textProps={{ style: { color: highlightColor } }}
 				/>
 			</PageContainer>
 		</SafeAreaView>
@@ -134,19 +144,20 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flex: 1,
 		justifyContent: 'center',
+		gap: 20,
 	},
 	verticallySpaced: {
 		paddingTop: 4,
 		paddingBottom: 4,
 		alignSelf: 'stretch',
 	},
-	mt20: {
-		marginTop: 20,
-	},
-	horizontalFlex: {
-		display: 'flex',
-		flexDirection: 'row',
-		justifyContent: 'center',
+	inputContainer: {
 		gap: 10,
+	},
+	buttonsContainer: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		gap: 5,
 	},
 });

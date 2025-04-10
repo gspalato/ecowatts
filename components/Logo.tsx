@@ -18,6 +18,7 @@ const Component: React.FC<Props> = (props) => {
       type="title"
       style={[
         {
+          padding: 1,
           textAlignVertical: "center",
           fontFamily: "Outfit_700Bold",
           letterSpacing: -1,

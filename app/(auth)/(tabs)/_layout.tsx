@@ -46,6 +46,7 @@ export default function TabLayout() {
 				},
 				tabBarLabelStyle: {
 					marginBottom: 0,
+					fontFamily: 'Outfit_500Medium',
 				},
 				tabBarBackground: () => (
 					<BlurView

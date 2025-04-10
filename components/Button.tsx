@@ -9,31 +9,57 @@ import {
   TouchableOpacityProps,
 } from "react-native-gesture-handler";
 import { ThemedText } from "./ThemedText";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 type Props = {
   text: string;
   textType?: ComponentProps<typeof ThemedText>["type"];
-  textProps?: TextProps;
+  textProps?: ComponentProps<typeof ThemedText>;
+  type?: "default" | "primary" | "secondary";
 } & PressableProps;
 
 export const Button: React.FC<Props> = (props) => {
-  const { text, textProps, textType, ...containerProps } = props;
+  const {
+    text,
+    textProps,
+    textType,
+    type = "default",
+    ...containerProps
+  } = props;
   const { style: containerStyle, ...restContainerProps } = containerProps;
   const { style: textStyle, ...restTextProps } = textProps || {};
 
+  const highlightColor = useThemeColor({}, "highlightColor");
+
   return (
-      <Pressable
-        style={({ pressed }) => [
+    <Pressable
+      style={({ pressed }) =>
+        [
           styles.container,
           containerStyle,
           pressed && styles.pressed,
-        ] as any}
-        {...restContainerProps}
+          type === "default" && styles.default,
+          type === "primary" && [
+            styles.primary,
+            { backgroundColor: highlightColor },
+          ],
+          type === "secondary" && styles.secondary,
+        ] as any
+      }
+      {...restContainerProps}
+    >
+      <ThemedText
+        type={type === "primary" ? "defaultSemiBold" : textType}
+        style={[
+          styles.text,
+          textStyle,
+          type === "primary" && { color: "#fff" },
+        ]}
+        {...restTextProps}
       >
-        <ThemedText type={textType} style={[styles.text, textStyle]} {...restTextProps}>
-          {text}
-        </ThemedText>
-      </Pressable>
+        {text}
+      </ThemedText>
+    </Pressable>
   );
 };
 
@@ -45,6 +71,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     minWidth: 100,
   },
+  default: {},
+  primary: {
+    borderWidth: 0,
+  },
+  secondary: {},
   text: {
     color: "#000000",
     fontSize: 14,
