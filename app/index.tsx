@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, AppState, StyleSheet, View } from 'react-native';
+import { Alert, AppState, StyleSheet, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
@@ -70,6 +70,14 @@ export default function Auth() {
 						<Title style={{ width: '100%', textAlign: 'center' }}>
 							Ecowatts
 						</Title>
+						<Text>
+							Seja <Text>bem vindo</Text>
+						</Text>
+					</View>
+					<View>
+						<Text>
+							Entrar
+						</Text>
 					</View>
 					<View style={[styles.verticallySpaced, styles.mt20]}>
 						<Input
@@ -87,6 +95,7 @@ export default function Auth() {
 							placeholder='Password'
 							autoCapitalize={'none'}
 						/>
+						<Text>Esqueceu a senha?</Text>
 					</View>
 					<View
 						style={[
@@ -96,18 +105,13 @@ export default function Auth() {
 						]}
 					>
 						<Button
-							text='Sign in'
+							text='Entrar'
 							disabled={loading}
 							onPress={() => signInWithEmail()}
 						/>
+						<Text>Não tem conta? Crie uma<Text disabled={loading} onPress={() => signInWithEmail()} style={{  }}> conta agora.</Text></Text>
 					</View>
 				</View>
-        <Button
-					text='Sign up'
-					disabled={loading}
-					onPress={() => signUpWithEmail()}
-          style={{ borderWidth: 0 }}
-				/>
 			</PageContainer>
 		</SafeAreaView>
 	);
@@ -130,7 +134,7 @@ const styles = StyleSheet.create({
 	horizontalFlex: {
 		display: 'flex',
 		flexDirection: 'row',
-    justifyContent: 'center',
+		justifyContent: 'center',
 		gap: 10,
 	},
 });
