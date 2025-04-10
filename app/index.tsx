@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, AppState, StyleSheet, View } from 'react-native';
+import { Alert, AppState, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
@@ -92,6 +92,7 @@ export default function Auth() {
 							placeholder='Senha'
 							autoCapitalize={'none'}
 						/>
+						<Text>Esqueceu a senha?</Text>
 					</View>
 					<View
 						style={[
@@ -105,6 +106,17 @@ export default function Auth() {
 							disabled={loading}
 							onPress={() => signInWithEmail()}
 						/>
+						<Text>
+							Não tem conta? Crie uma
+							<Text
+								disabled={loading}
+								onPress={() => signInWithEmail()}
+								style={{}}
+							>
+								{' '}
+								conta agora.
+							</Text>
+						</Text>
 					</View>
 				</View>
 				<Button
