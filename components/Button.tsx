@@ -25,7 +25,7 @@ export const Button: React.FC<Props> = (props) => {
           styles.container,
           containerStyle,
           pressed && styles.pressed,
-        ]}
+        ] as any}
         {...restContainerProps}
       >
         <Text style={[styles.text, textStyle]} {...restTextProps}>

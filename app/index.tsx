@@ -9,6 +9,7 @@ import { PageContainer } from '@/components/PageContainer';
 import { Title } from '@/components/Title';
 
 import { supabase } from '../lib/supabase';
+import { ThemedText } from '@/components/ThemedText';
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -46,6 +47,11 @@ export default function Auth() {
 	}
 
 	async function signUpWithEmail() {
+		if (email === '' || password === '') {
+			Alert.alert('Please fill in all fields.');
+			return;
+		}
+		
 		setLoading(true);
 		const {
 			data: { session },
@@ -55,7 +61,8 @@ export default function Auth() {
 			password: password,
 		});
 
-		if (error) Alert.alert(error.message);
+		if (error)
+			Alert.alert(error.message);
 		if (!session)
 			Alert.alert('Please check your inbox for email verification!');
 
@@ -67,9 +74,9 @@ export default function Auth() {
 			<PageContainer>
 				<View style={styles.container}>
 					<View style={[styles.verticallySpaced, styles.mt20]}>
-						<Title style={{ width: '100%', textAlign: 'center' }}>
+						<ThemedText type="title" style={{ width: '100%', textAlign: 'center' }}>
 							Ecowatts
-						</Title>
+						</ThemedText>
 					</View>
 					<View style={[styles.verticallySpaced, styles.mt20]}>
 						<Input
