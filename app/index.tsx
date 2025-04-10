@@ -5,11 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
+import Logo from '@/components/Logo';
 import { PageContainer } from '@/components/PageContainer';
+import { ThemedText } from '@/components/ThemedText';
 import { Title } from '@/components/Title';
 
 import { supabase } from '../lib/supabase';
-import { ThemedText } from '@/components/ThemedText';
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -42,7 +43,7 @@ export default function Auth() {
 		if (error) {
 			Alert.alert(error.message);
 		} else {
-			router.replace('/(stack)/home');
+			router.replace('/(auth)/(tabs)/home');
 		}
 	}
 
@@ -51,7 +52,7 @@ export default function Auth() {
 			Alert.alert('Please fill in all fields.');
 			return;
 		}
-		
+
 		setLoading(true);
 		const {
 			data: { session },
@@ -61,8 +62,7 @@ export default function Auth() {
 			password: password,
 		});
 
-		if (error)
-			Alert.alert(error.message);
+		if (error) Alert.alert(error.message);
 		if (!session)
 			Alert.alert('Please check your inbox for email verification!');
 
@@ -74,9 +74,7 @@ export default function Auth() {
 			<PageContainer>
 				<View style={styles.container}>
 					<View style={[styles.verticallySpaced, styles.mt20]}>
-						<ThemedText type="title" style={{ width: '100%', textAlign: 'center' }}>
-							Ecowatts
-						</ThemedText>
+						<Logo />
 					</View>
 					<View style={[styles.verticallySpaced, styles.mt20]}>
 						<Input
@@ -109,11 +107,11 @@ export default function Auth() {
 						/>
 					</View>
 				</View>
-        <Button
+				<Button
 					text='Não tem uma conta? Crie uma agora!'
 					disabled={loading}
 					onPress={() => signUpWithEmail()}
-          style={{ borderWidth: 0 }}
+					style={{ borderWidth: 0 }}
 				/>
 			</PageContainer>
 		</SafeAreaView>
@@ -137,7 +135,7 @@ const styles = StyleSheet.create({
 	horizontalFlex: {
 		display: 'flex',
 		flexDirection: 'row',
-    justifyContent: 'center',
+		justifyContent: 'center',
 		gap: 10,
 	},
 });
