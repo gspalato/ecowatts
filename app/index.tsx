@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, AppState, StyleSheet, Text, View } from 'react-native';
+import { Alert, AppState, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
@@ -8,7 +8,6 @@ import { Input } from '@/components/Input';
 import Logo from '@/components/Logo';
 import { PageContainer } from '@/components/PageContainer';
 import { ThemedText } from '@/components/ThemedText';
-import { Title } from '@/components/Title';
 
 import { supabase } from '../lib/supabase';
 
@@ -92,7 +91,7 @@ export default function Auth() {
 							placeholder='Senha'
 							autoCapitalize={'none'}
 						/>
-						<Text>Esqueceu a senha?</Text>
+						<ThemedText>Esqueceu a senha?</ThemedText>
 					</View>
 					<View
 						style={[
@@ -106,17 +105,17 @@ export default function Auth() {
 							disabled={loading}
 							onPress={() => signInWithEmail()}
 						/>
-						<Text>
+						<ThemedText>
 							Não tem conta? Crie uma
-							<Text
+							<ThemedText
 								disabled={loading}
 								onPress={() => signInWithEmail()}
 								style={{}}
 							>
 								{' '}
 								conta agora.
-							</Text>
-						</Text>
+							</ThemedText>
+						</ThemedText>
 					</View>
 				</View>
 				<Button
