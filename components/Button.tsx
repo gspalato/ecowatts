@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { ComponentProps, useMemo } from "react";
 import { Text, TouchableOpacity, TextProps, StyleSheet } from "react-native";
 import {
   Gesture,
@@ -8,14 +8,16 @@ import {
   TapGesture,
   TouchableOpacityProps,
 } from "react-native-gesture-handler";
+import { ThemedText } from "./ThemedText";
 
 type Props = {
   text: string;
+  textType?: ComponentProps<typeof ThemedText>["type"];
   textProps?: TextProps;
 } & PressableProps;
 
 export const Button: React.FC<Props> = (props) => {
-  const { text, textProps, ...containerProps } = props;
+  const { text, textProps, textType, ...containerProps } = props;
   const { style: containerStyle, ...restContainerProps } = containerProps;
   const { style: textStyle, ...restTextProps } = textProps || {};
 
@@ -28,9 +30,9 @@ export const Button: React.FC<Props> = (props) => {
         ] as any}
         {...restContainerProps}
       >
-        <Text style={[styles.text, textStyle]} {...restTextProps}>
+        <ThemedText type={textType} style={[styles.text, textStyle]} {...restTextProps}>
           {text}
-        </Text>
+        </ThemedText>
       </Pressable>
   );
 };

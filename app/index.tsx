@@ -91,7 +91,7 @@ export default function Auth() {
 							onChangeText={(text: string) => setPassword(text)}
 							value={password}
 							secureTextEntry={true}
-							placeholder='Password'
+							placeholder='Senha'
 							autoCapitalize={'none'}
 						/>
 					</View>
@@ -103,14 +103,14 @@ export default function Auth() {
 						]}
 					>
 						<Button
-							text='Sign in'
+							text='Entrar'
 							disabled={loading}
 							onPress={() => signInWithEmail()}
 						/>
 					</View>
 				</View>
         <Button
-					text='Sign up'
+					text='Não tem uma conta? Crie uma agora!'
 					disabled={loading}
 					onPress={() => signUpWithEmail()}
           style={{ borderWidth: 0 }}
