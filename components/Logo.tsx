@@ -25,11 +25,12 @@ const Component: React.FC<Props> = (props) => {
         },
         style,
       ]}
+      sharedTransitionTag="logo"
     >
       <Text style={{ color: highlightColor }}>Eco</Text>Watts.
     </ThemedText>
   );
 };
-Component.displayName = "";
+Component.displayName = "Logo";
 
 export default Component;

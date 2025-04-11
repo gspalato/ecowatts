@@ -35,6 +35,10 @@ export default function Auth() {
 	const highlightColor = useThemeColor({}, 'highlightColor');
 
 	async function signInWithEmail() {
+		if (email === '' || password === '') {
+			Alert.alert('Por favor preencha todos os campos.');
+		}
+
 		setLoading(true);
 		const { error } = await supabase.auth.signInWithPassword({
 			email: email,
@@ -52,7 +56,7 @@ export default function Auth() {
 
 	async function signUpWithEmail() {
 		if (email === '' || password === '') {
-			Alert.alert('Please fill in all fields.');
+			Alert.alert('Por favor preencha todos os campos.');
 			return;
 		}
 
@@ -67,7 +71,7 @@ export default function Auth() {
 
 		if (error) Alert.alert(error.message);
 		if (!session)
-			Alert.alert('Please check your inbox for email verification!');
+			Alert.alert('Cheque seu e-mail para verificar sua conta!');
 
 		setLoading(false);
 	}

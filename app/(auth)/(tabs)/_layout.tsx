@@ -43,6 +43,14 @@ export default function TabLayout() {
 					marginHorizontal: insets.bottom,
 					marginBottom: insets.bottom,
 					borderCurve: 'continuous',
+
+					shadowColor: '#000000',
+					shadowRadius: 7,
+					shadowOpacity: 0.075,
+					shadowOffset: {
+						width: 0,
+						height: 0,
+					},
 				},
 				tabBarLabelStyle: {
 					marginBottom: 0,
