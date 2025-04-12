@@ -1,16 +1,80 @@
-import { SafeAreaView, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useRouter } from 'expo-router';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
+import { Button } from '@/components/Button';
 import { PageContainer } from '@/components/PageContainer';
 import StackPageHeader from '@/components/StackPageHeader';
 import { TabPageContainer } from '@/components/TabPageContainer';
+import { ThemedSafeAreaView } from '@/components/ThemedSafeAreaView';
+import { ThemedText } from '@/components/ThemedText';
+
+import { APPLIANCES } from '@/constants/ApplianceTypes';
 
 const Page = () => {
+	const router = useRouter();
+
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
-			<PageContainer style={{ flex: 1 }}>
-				<StackPageHeader title='Graph' />
+		<ThemedSafeAreaView style={{ flex: 1, backgroundColor: '#F2F2F5' }}>
+			<PageContainer>
+				<StackPageHeader title='Registrar' />
+				<View
+					style={{
+						flex: 1,
+						display: 'flex',
+						gap: 20,
+						paddingTop: 20,
+					}}
+				>
+					<ThemedText
+						type='default'
+						style={{ fontSize: 16, textAlign: 'center' }}
+					>
+						Selecione o tipo do eletrodoméstico.
+					</ThemedText>
+					<ScrollView style={{ flex: 1 }}>
+						{APPLIANCES.map((appliance) => (
+							<Button
+								key={appliance.type}
+								style={{
+									flexDirection: 'row',
+									width: '100%',
+									justifyContent: 'center',
+									alignItems: 'center',
+									paddingVertical: 20,
+									borderWidth: 0,
+									borderBottomWidth: 1,
+									borderColor: '#E5E5EA',
+								}}
+								onPress={() =>
+									router.push(
+										`/(auth)/appliance/${appliance.type}`,
+									)
+								}
+								icon={appliance.icon({
+									style: {
+										position: 'absolute',
+										left: 20,
+									},
+								})}
+								text={appliance.name}
+								textType='subtitle'
+								textProps={{
+									style: {
+										fontSize: 18,
+										textAlign: 'center',
+										width: 'auto',
+									},
+								}}
+								type='secondary'
+							/>
+						))}
+					</ScrollView>
+				</View>
 			</PageContainer>
-		</SafeAreaView>
+		</ThemedSafeAreaView>
 	);
 };
 

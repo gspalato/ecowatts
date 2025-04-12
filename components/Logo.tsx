@@ -25,7 +25,6 @@ const Component: React.FC<Props> = (props) => {
         },
         style,
       ]}
-      sharedTransitionTag="logo"
     >
       <Text style={{ color: highlightColor }}>Eco</Text>Watts.
     </ThemedText>

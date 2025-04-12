@@ -5,7 +5,7 @@ import StackPageHeader from '@/components/StackPageHeader';
 
 const Page = () => {
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={{ flex: 1 }}>
 			<PageContainer>
 				<StackPageHeader title='User' />
 			</PageContainer>

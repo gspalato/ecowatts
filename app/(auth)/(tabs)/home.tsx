@@ -18,8 +18,6 @@ const Home = () => {
 		<TabPageContainer
 			style={{
 				flex: 1,
-			}}
-			contentContainerStyle={{
 				display: 'flex',
 				gap: 20,
 			}}

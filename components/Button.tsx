@@ -15,15 +15,17 @@ type Props = {
   text: string;
   textType?: ComponentProps<typeof ThemedText>["type"];
   textProps?: ComponentProps<typeof ThemedText>;
+  icon?: React.ReactNode;
   type?: "default" | "primary" | "secondary";
 } & PressableProps;
 
 export const Button: React.FC<Props> = (props) => {
   const {
+    icon,
     text,
     textProps,
     textType,
-    type = "default",
+    type = "primary",
     ...containerProps
   } = props;
   const { style: containerStyle, ...restContainerProps } = containerProps;
@@ -38,7 +40,6 @@ export const Button: React.FC<Props> = (props) => {
           styles.container,
           containerStyle,
           pressed && styles.pressed,
-          type === "default" && styles.default,
           type === "primary" && [
             styles.primary,
             { backgroundColor: highlightColor },
@@ -48,6 +49,7 @@ export const Button: React.FC<Props> = (props) => {
       }
       {...restContainerProps}
     >
+      {icon ? icon : null}
       <ThemedText
         type={type === "primary" ? "defaultSemiBold" : textType}
         style={[
@@ -65,22 +67,19 @@ export const Button: React.FC<Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#00000011",
-    borderRadius: 10,
-    minWidth: 100,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+    marginTop: 8,
   },
-  default: {},
   primary: {
     borderWidth: 0,
   },
   secondary: {},
   text: {
     color: "#000000",
-    fontSize: 14,
-    width: "100%",
-    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "600",
   },
   pressed: {
     opacity: 0.5,

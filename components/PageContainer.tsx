@@ -1,6 +1,7 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
+import { ThemedView } from "./ThemedView";
 
 type Props = ViewProps;
 
@@ -8,9 +9,9 @@ export const PageContainer: React.FC<Props> = (props) => {
   const { children, style, ...rest } = props;
 
   return (
-    <View style={[styles.container, style]} {...props}>
+    <ThemedView style={[styles.container, style]} {...props}>
       {children}
-    </View>
+    </ThemedView>
   );
 };
 
@@ -20,5 +21,6 @@ const styles = StyleSheet.create({
     margin: 10,
     marginHorizontal: 20,
     flex: 1,
+    height: "100%",
   },
 });

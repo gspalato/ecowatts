@@ -13,28 +13,24 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-type Props = ScrollViewProps;
+type Props = ViewProps;
 
 export const TabPageContainer: React.FC<Props> = (props) => {
-  const { children, style, contentContainerStyle, ...rest } = props;
+  const { children, style, ...rest } = props;
 
   const tabBarHeight = useBottomTabBarHeight();
   const insets = useSafeAreaInsets();
   const statusBarHeight = insets.top;
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView
-        style={[styles.container, style]}
-        contentContainerStyle={[{ display: "flex" }, contentContainerStyle]}
-        contentInset={{ top: statusBarHeight, bottom: tabBarHeight }}
-        {...rest}
-      >
-        {children}
-      </ScrollView>
-      <BlurView
-        style={{ position: "absolute", height: statusBarHeight, width: "100%" }}
-      />
+    <View
+      style={[
+        { flex: 1, paddingTop: statusBarHeight, paddingBottom: tabBarHeight },
+        styles.container,
+        style,
+      ]}
+    >
+      {children}
     </View>
   );
 };

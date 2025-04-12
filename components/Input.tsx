@@ -18,11 +18,13 @@ export const Input: React.FC<Props> = (props) => {
 const styles = StyleSheet.create({
   input: {
     fontSize: 16,
-    padding: 10,
     color: "#000000",
     borderWidth: 1,
-    borderColor: "#00000011",
-    borderRadius: 10,
     fontFamily: "Outfit_400Regular",
+
+    backgroundColor: "#F2F2F7",
+    borderRadius: 8,
+    padding: 12,
+    borderColor: "#E5E5EA",
   },
 });

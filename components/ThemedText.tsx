@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontFamily: "Inter_400Regular",
+    letterSpacing: -0,
   },
   defaultSemiBold: {
     fontSize: 16,
