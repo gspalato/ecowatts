@@ -8,7 +8,7 @@ import { Button } from '@/components/Button';
 import { PageContainer } from '@/components/PageContainer';
 import StackPageHeader from '@/components/StackPageHeader';
 import { TabPageContainer } from '@/components/TabPageContainer';
-import { ThemedSafeAreaView } from '@/components/ThemedSafeAreaView';
+import { ThemedSafeView } from '@/components/ThemedSafeView';
 import { ThemedText } from '@/components/ThemedText';
 
 import { APPLIANCES } from '@/constants/Appliance';
@@ -17,7 +17,7 @@ const Page = () => {
 	const router = useRouter();
 
 	return (
-		<ThemedSafeAreaView style={{ flex: 1, backgroundColor: '#F2F2F5' }}>
+		<ThemedSafeView style={{ flex: 1, backgroundColor: '#F2F2F5' }}>
 			<PageContainer>
 				<StackPageHeader title='Registrar' />
 				<View
@@ -74,7 +74,7 @@ const Page = () => {
 					</ScrollView>
 				</View>
 			</PageContainer>
-		</ThemedSafeAreaView>
+		</ThemedSafeView>
 	);
 };
 

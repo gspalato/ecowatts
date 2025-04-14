@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/Button';
 import { PageContainer } from '@/components/PageContainer';
 import StackPageHeader from '@/components/StackPageHeader';
-import { ThemedSafeAreaView } from '@/components/ThemedSafeAreaView';
+import { ThemedSafeView } from '@/components/ThemedSafeView';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 
@@ -42,7 +42,7 @@ const ApplianceDetailsPage = () => {
 	const manualInputInfo = applianceType?.manualInput;
 
 	return (
-		<ThemedSafeAreaView style={styles.container}>
+		<ThemedSafeView style={styles.container}>
 			<PageContainer>
 				<StackPageHeader
 					title={`Registrar`}
@@ -195,7 +195,7 @@ const ApplianceDetailsPage = () => {
 					</View>
 				</ScrollView>
 			</PageContainer>
-		</ThemedSafeAreaView>
+		</ThemedSafeView>
 	);
 };
 

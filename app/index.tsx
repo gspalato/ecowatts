@@ -7,6 +7,7 @@ import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import Logo from '@/components/Logo';
 import { PageContainer } from '@/components/PageContainer';
+import SafeView from '@/components/SafeView';
 import { ThemedText } from '@/components/ThemedText';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -77,7 +78,7 @@ export default function Auth() {
 	}
 
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
+		<SafeView style={{ flex: 1 }}>
 			<PageContainer>
 				<View style={styles.container}>
 					<Logo
@@ -141,7 +142,7 @@ export default function Auth() {
 					textProps={{ style: { color: highlightColor } }}
 				/>
 			</PageContainer>
-		</SafeAreaView>
+		</SafeView>
 	);
 }
 
