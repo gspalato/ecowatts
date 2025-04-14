@@ -117,7 +117,6 @@ const Home = () => {
 							type='title'
 							style={{
 								fontSize: 24,
-								fontWeight: 'bold',
 							}}
 						>
 							<Text style={{ color: highlightColor }}>
@@ -155,10 +154,7 @@ const Home = () => {
 							marginBottom: 20,
 						}}
 					>
-						<ThemedText
-							type='title'
-							style={{ fontSize: 20, fontWeight: 'bold' }}
-						>
+						<ThemedText type='title' style={{ fontSize: 20 }}>
 							Consumo Geral
 						</ThemedText>
 						<View
@@ -198,7 +194,6 @@ const Home = () => {
 											type='title'
 											style={{
 												fontSize: 22,
-												fontWeight: 'bold',
 											}}
 										>
 											15.000Wh
@@ -231,7 +226,7 @@ const Home = () => {
 							</ThemedText>
 							<ThemedText
 								type='defaultSemiBold'
-								style={{ fontSize: 20, fontWeight: 'bold' }}
+								style={{ fontSize: 20 }}
 							>
 								02
 							</ThemedText>
@@ -249,7 +244,7 @@ const Home = () => {
 							</ThemedText>
 							<ThemedText
 								type='defaultSemiBold'
-								style={{ fontSize: 20, fontWeight: 'bold' }}
+								style={{ fontSize: 20 }}
 							>
 								R$ 9,00
 							</ThemedText>

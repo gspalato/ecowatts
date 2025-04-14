@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
   text: {
     color: "#000000",
     fontSize: 16,
-    fontWeight: "600",
   },
   pressed: {
     opacity: 0.5,

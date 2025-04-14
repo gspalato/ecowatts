@@ -215,7 +215,6 @@ const styles = StyleSheet.create({
 	},
 	sectionTitle: {
 		fontSize: 18,
-		fontWeight: '600',
 		marginBottom: 12,
 		color: '#1C1C1E',
 	},
@@ -283,7 +282,6 @@ const styles = StyleSheet.create({
 	submitButtonText: {
 		color: '#FFFFFF',
 		fontSize: 16,
-		fontWeight: '600',
 	},
 });
 
