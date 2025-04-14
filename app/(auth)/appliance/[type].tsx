@@ -18,58 +18,74 @@ import { ThemedSafeAreaView } from '@/components/ThemedSafeAreaView';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 
-import { APPLIANCES } from '@/constants/ApplianceTypes';
+import { APPLIANCES } from '@/constants/Appliance';
+
+type ManuelInputFields = {
+	[key: string]: {
+		label: string;
+		[key: string]: string;
+	};
+};
 
 const ApplianceDetailsPage = () => {
 	const { type } = useLocalSearchParams();
 	const router = useRouter();
 	const borderColor = useThemeColor({}, 'borderColor');
 	const [searchQuery, setSearchQuery] = useState('');
-	const [manualInput, setManualInput] = useState({
-		brand: '',
-		model: '',
-		powerConsumption: '',
-		dailyUse: '',
-	});
+	const [manualInput, setManualInput] = useState({});
 
-	const typeDisplayName = APPLIANCES.find(
+	const applianceType = APPLIANCES.find(
 		(appliance) => appliance.type === type,
-	)?.displayName;
+	);
+
+	const typeDisplayName = applianceType?.displayName;
+	const manualInputInfo = applianceType?.manualInput;
 
 	return (
 		<ThemedSafeAreaView style={styles.container}>
 			<PageContainer>
-				<StackPageHeader title={`Registrar`} />
+				<StackPageHeader
+					title={`Registrar`}
+					style={{ marginBottom: 20 }}
+				/>
 				<ScrollView style={styles.content}>
-					<View
-						style={[
-							styles.searchContainer,
-							{
-								borderWidth: StyleSheet.hairlineWidth,
-								borderColor,
-							},
-						]}
-					>
-						<Text style={styles.sectionTitle}>
-							Pesquise pelo modelo de{' '}
-							{typeDisplayName?.toLowerCase()}.
-						</Text>
-						<View style={styles.searchInputContainer}>
-							<Ionicons name='search' size={20} color='#ccc' />
-							<TextInput
-								style={styles.searchInput}
-								placeholder={`Pesquise pelo modelo.`}
-								value={searchQuery}
-								onChangeText={setSearchQuery}
-							/>
-						</View>
-					</View>
+					{!manualInputInfo?.only && (
+						<>
+							<View
+								style={[
+									styles.searchContainer,
+									{
+										borderWidth: StyleSheet.hairlineWidth,
+										borderColor,
+									},
+								]}
+							>
+								<Text style={styles.sectionTitle}>
+									Pesquise pelo modelo de{' '}
+									{typeDisplayName?.toLowerCase()}.
+								</Text>
+								<View style={styles.searchInputContainer}>
+									<Ionicons
+										name='search'
+										size={20}
+										color='#ccc'
+									/>
+									<TextInput
+										style={styles.searchInput}
+										placeholder={`Pesquise pelo modelo.`}
+										value={searchQuery}
+										onChangeText={setSearchQuery}
+									/>
+								</View>
+							</View>
 
-					<View style={styles.divider}>
-						<View style={styles.dividerLine} />
-						<Text style={styles.dividerText}>or</Text>
-						<View style={styles.dividerLine} />
-					</View>
+							<View style={styles.divider}>
+								<View style={styles.dividerLine} />
+								<Text style={styles.dividerText}>or</Text>
+								<View style={styles.dividerLine} />
+							</View>
+						</>
+					)}
 
 					<View
 						style={[
@@ -83,6 +99,24 @@ const ApplianceDetailsPage = () => {
 						<Text style={styles.sectionTitle}>
 							Insira manualmente
 						</Text>
+						{manualInputInfo?.fields?.map((field) => (
+							<View style={styles.inputGroup} key={field.label}>
+								<Text style={styles.label}>{field.label}</Text>
+								<TextInput
+									style={styles.input}
+									placeholder={field.placeholder}
+									value={manualInput[field.label]}
+									onChangeText={(text) =>
+										setManualInput({
+											...manualInput,
+											[field.label]: text,
+										})
+									}
+								/>
+							</View>
+						))}
+
+						{/*
 						<View style={styles.inputGroup}>
 							<Text style={styles.label}>Marca</Text>
 							<TextInput
@@ -148,6 +182,7 @@ const ApplianceDetailsPage = () => {
 								}
 							/>
 						</View>
+                        */}
 
 						<Button text='Adicionar' type='primary'></Button>
 						{/*
@@ -174,8 +209,6 @@ const styles = StyleSheet.create({
 		padding: 16,
 	},
 	searchContainer: {
-		marginTop: 20,
-
 		backgroundColor: '#FFFFFF',
 		borderRadius: 16,
 		padding: 16,
@@ -223,7 +256,6 @@ const styles = StyleSheet.create({
 		backgroundColor: '#FFFFFF',
 		borderRadius: 16,
 		padding: 16,
-		marginBottom: 24,
 	},
 	inputGroup: {
 		marginBottom: 16,

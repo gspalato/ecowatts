@@ -11,7 +11,7 @@ import { TabPageContainer } from '@/components/TabPageContainer';
 import { ThemedSafeAreaView } from '@/components/ThemedSafeAreaView';
 import { ThemedText } from '@/components/ThemedText';
 
-import { APPLIANCES } from '@/constants/ApplianceTypes';
+import { APPLIANCES } from '@/constants/Appliance';
 
 const Page = () => {
 	const router = useRouter();

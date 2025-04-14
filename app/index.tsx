@@ -120,6 +120,7 @@ export default function Auth() {
 						/>
 						<Button
 							text='Esqueceu a senha?'
+							type='secondary'
 							disabled={loading}
 							onPress={() => signUpWithEmail()}
 							style={{
@@ -133,6 +134,7 @@ export default function Auth() {
 				</View>
 				<Button
 					text='Não tem uma conta? Crie uma agora!'
+					type='secondary'
 					disabled={loading}
 					onPress={() => signUpWithEmail()}
 					style={{ borderWidth: 0 }}

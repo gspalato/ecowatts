@@ -41,8 +41,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 5,
-    borderWidth: 1 || StyleSheet.hairlineWidth,
+    borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 100,
+    backgroundColor: "#fff",
   },
   pressed: {
     opacity: 0.5,

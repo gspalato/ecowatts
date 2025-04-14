@@ -3,7 +3,7 @@ import { useTheme } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { FlatList, SafeAreaView, View } from 'react-native';
+import { FlatList, SafeAreaView, Text, View } from 'react-native';
 
 import HeaderContainer from '@/components/HeaderContainer';
 import { IconButton } from '@/components/IconButton';
@@ -101,8 +101,14 @@ const Page = () => {
 							<ThemedText type='small'>
 								{item.item.brand} {item.item.model}
 							</ThemedText>
-							<ThemedText type='default'>
-								Gasto diário estimado de {item.item.consumption}
+							<ThemedText type='small'>
+								Gasto diário estimado de{' '}
+								<Text
+									style={{ fontFamily: 'Inter_600SemiBold' }}
+								>
+									{item.item.consumption || '0kWh'}
+								</Text>
+								.
 							</ThemedText>
 						</View>
 					</View>
