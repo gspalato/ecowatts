@@ -1,3 +1,4 @@
+import { applianceTypeMap } from "@/lib/inmetro";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -20,6 +21,7 @@ export const APPLIANCES = [
     ),
     type: "television",
     displayName: "Televisão",
+    inmetroCode: applianceTypeMap['television'],
     manualInputOnly: false,
     manualInput: {
       only: false,
@@ -88,6 +90,7 @@ export const APPLIANCES = [
     ),
     type: "refrigerator",
     displayName: "Geladeira",
+    inmetroCode: applianceTypeMap['fridge'],
     manualInput: {
       only: false,
       fields: [
@@ -127,6 +130,7 @@ export const APPLIANCES = [
     ),
     type: "microwave",
     displayName: "Microondas",
+    inmetroCode: applianceTypeMap['microwave'],
     manualInput: {
       only: false,
       fields: [
@@ -161,6 +165,7 @@ export const APPLIANCES = [
     ),
     type: "router",
     displayName: "Roteador",
+    //inmetroCode: applianceTypeMap['router'],
     manualInput: {
       only: false,
       fields: [
@@ -195,6 +200,7 @@ export const APPLIANCES = [
     ),
     type: "computer",
     displayName: "Computador",
+    //inmetroCode: applianceTypeMap['computer'],
     manualInputOnly: true,
     manualInput: {
       only: true,

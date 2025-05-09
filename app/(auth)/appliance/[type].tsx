@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	SafeAreaView,
 	ScrollView,
@@ -10,6 +10,7 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
+import { useDebounceValue } from 'usehooks-ts'
 
 import { Button } from '@/components/Button';
 import { PageContainer } from '@/components/PageContainer';
@@ -19,6 +20,7 @@ import { ThemedSafeView } from '@/components/ThemedSafeView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 import { APPLIANCES } from '@/constants/Appliance';
+import { searchInmetro } from '@/lib/inmetro';
 
 type ManuelInputFields = {
 	[key: string]: {
@@ -28,11 +30,17 @@ type ManuelInputFields = {
 };
 
 const ApplianceDetailsPage = () => {
-	const { type } = useLocalSearchParams();
-	const router = useRouter();
+	const searchParams = useLocalSearchParams();
+	console.log(searchParams)
+	const { type } = searchParams;
+
 	const borderColor = useThemeColor({}, 'borderColor');
-	const [searchQuery, setSearchQuery] = useState('');
-	const [manualInput, setManualInput] = useState({});
+
+	const [brandSearchQuery, setBrandSearchQuery] = useDebounceValue('', 500);
+	const [modelSearchQuery, setModelSearchQuery] = useDebounceValue('', 500);
+	const [searchResult, setSearchResult] = useState<{ [key: string]: any }>({ content: [] })
+
+	const [manualInput, setManualInput] = useState<{ [key: string]: any }>({});
 
 	const applianceType = APPLIANCES.find(
 		(appliance) => appliance.type === type,
@@ -40,6 +48,20 @@ const ApplianceDetailsPage = () => {
 
 	const typeDisplayName = applianceType?.displayName;
 	const manualInputInfo = applianceType?.manualInput;
+	const inmetroCode = applianceType?.inmetroCode;
+
+	const hasSearch = (brandSearchQuery.length > 0 || modelSearchQuery.length > 0)
+
+	useEffect(() => {
+		const search = async () => {
+			const res = await searchInmetro(brandSearchQuery, modelSearchQuery, applianceType?.inmetroCode!)
+			setSearchResult(await res.json())
+			console.log(await res.json());
+		}
+
+		if (hasSearch)
+			search();
+	}, [brandSearchQuery, modelSearchQuery])
 
 	return (
 		<ThemedSafeView style={styles.container}>
@@ -61,27 +83,74 @@ const ApplianceDetailsPage = () => {
 								]}
 							>
 								<Text style={styles.sectionTitle}>
-									Pesquise pelo modelo de{' '}
+									Pesquise pelo(a){' '}
 									{typeDisplayName?.toLowerCase()}.
 								</Text>
-								<View style={styles.searchInputContainer}>
-									<Ionicons
-										name='search'
-										size={20}
-										color='#ccc'
-									/>
-									<TextInput
-										style={styles.searchInput}
-										placeholder={`Pesquise pelo modelo.`}
-										value={searchQuery}
-										onChangeText={setSearchQuery}
-									/>
+								<View style={{ flexDirection: 'row', flex: 1, gap: 5 }}>
+									<View style={styles.searchInputContainer}>
+										<Ionicons
+											name='search'
+											size={20}
+											color='#ccc'
+										/>
+										<TextInput
+											style={styles.searchInput}
+											placeholder={`Marca`}
+											//value={brandSearchDisplayQuery}
+											onChangeText={(t) => setBrandSearchQuery(t)}
+										/>
+									</View>
+									<View style={styles.searchInputContainer}>
+										<Ionicons
+											name='search'
+											size={20}
+											color='#ccc'
+										/>
+										<TextInput
+											style={styles.searchInput}
+											placeholder={`Modelo`}
+											//value={modelSearchDisplayQuery}
+											onChangeText={(t) => setModelSearchQuery(t)}
+										/>
+									</View>
 								</View>
+								<ScrollView style={{ display: hasSearch ? 'flex' : 'none', flex: 1 }}>
+									{searchResult.content.slice(0, 10).map((e: any) => (
+										<Button
+											key={e.codigoBarras}
+											style={{
+												flexDirection: 'row',
+												width: '100%',
+												justifyContent: 'center',
+												alignItems: 'center',
+												paddingVertical: 20,
+												borderWidth: 0,
+												borderBottomWidth: 1,
+												borderColor: '#E5E5EA',
+											}}
+											onPress={() => { }
+												//router.push(
+												//	`/(auth)/appliance/${appliance.type}`,
+												//)
+											}
+											text={`${e.nomeMarca} ${e.nomeModelo}`}
+											textType='subtitle'
+											textProps={{
+												style: {
+													fontSize: 16,
+													textAlign: 'center',
+													width: 'auto',
+												},
+											}}
+											type='secondary'
+										/>
+									))}
+								</ScrollView>
 							</View>
 
 							<View style={styles.divider}>
 								<View style={styles.dividerLine} />
-								<Text style={styles.dividerText}>or</Text>
+								<Text style={styles.dividerText}>ou</Text>
 								<View style={styles.dividerLine} />
 							</View>
 						</>
@@ -115,83 +184,7 @@ const ApplianceDetailsPage = () => {
 								/>
 							</View>
 						))}
-
-						{/*
-						<View style={styles.inputGroup}>
-							<Text style={styles.label}>Marca</Text>
-							<TextInput
-								style={styles.input}
-								placeholder='Insira o nome da marca.'
-								value={manualInput.brand}
-								onChangeText={(text) =>
-									setManualInput({
-										...manualInput,
-										brand: text,
-									})
-								}
-							/>
-						</View>
-
-						<View style={styles.inputGroup}>
-							<Text style={styles.label}>Modelo</Text>
-							<TextInput
-								style={styles.input}
-								placeholder='Insira o modelo.'
-								value={manualInput.model}
-								onChangeText={(text) =>
-									setManualInput({
-										...manualInput,
-										model: text,
-									})
-								}
-							/>
-						</View>
-
-						<View style={styles.inputGroup}>
-							<Text style={styles.label}>
-								Consumo de energia mensal (kWh)
-							</Text>
-							<TextInput
-								style={styles.input}
-								placeholder='Insira o consumo de energia mensal.'
-								keyboardType='numeric'
-								value={manualInput.powerConsumption}
-								onChangeText={(text) =>
-									setManualInput({
-										...manualInput,
-										powerConsumption: text,
-									})
-								}
-							/>
-						</View>
-
-						<View style={styles.inputGroup}>
-							<Text style={styles.label}>
-								Tempo médio de uso diário (horas)
-							</Text>
-							<TextInput
-								style={styles.input}
-								placeholder='Insira o tempo médio de uso diário.'
-								keyboardType='numeric'
-								value={manualInput.dailyUse}
-								onChangeText={(text) =>
-									setManualInput({
-										...manualInput,
-										dailyUse: text,
-									})
-								}
-							/>
-						</View>
-                        */}
-
 						<Button text='Adicionar' type='primary'></Button>
-						{/*
-						<TouchableOpacity style={styles.submitButton}>
-							<Text style={styles.submitButtonText}>
-								Add Appliance
-							</Text>
-						</TouchableOpacity>
-                        */}
 					</View>
 				</ScrollView>
 			</PageContainer>
@@ -227,6 +220,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: '#E5E5EA',
 		gap: 5,
+		flex: .5
 	},
 	searchIcon: {
 		marginRight: 8,
