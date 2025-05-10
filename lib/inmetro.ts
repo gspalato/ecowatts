@@ -15,6 +15,35 @@ export const applianceTypeMap = {
 	standing_fan: 184,
 } as const; // idPrograma
 
+export const applianceTypeAttributeMap = {
+	television: {
+		brand: 2000,
+		model: 2001,
+		monthly_consumption_kwh: 333
+	},
+	air_conditioner: {
+		annual_consumption_kwh: 471
+	},
+	microwave: {
+		daily_standby_consumption_kwh: 216
+	},
+	washing_machine: {
+		avg_consumption_per_washing_cycle: ['avg', 419, 421]
+	},
+	electric_oven: {
+		hourly_consumption_in_use_kwh: 329
+	},
+	fridge: {
+		monthly_consumption_kwh: 493
+	},
+	//ceiling_fan: {
+	//	daily_standby_consumption_kwh: 216
+	//},
+	//standing_fan: {
+	//	daily_standby_consumption_kwh: 216
+	//},
+}
+
 const propertyMap = {
 	brand: 2000,
 	model: 2001,

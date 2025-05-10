@@ -8,6 +8,7 @@ import { ThemedSafeView } from '@/components/ThemedSafeView';
 import { ThemedText } from '@/components/ThemedText';
 
 import { APPLIANCES } from '@/constants/Appliance';
+import React from 'react';
 
 const Page = () => {
 	const router = useRouter();

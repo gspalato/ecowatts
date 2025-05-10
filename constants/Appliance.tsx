@@ -2,6 +2,7 @@ import { applianceTypeMap } from "@/lib/inmetro";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import React from "react";
 
 enum ManualInputFields {
   Label = 0,

@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { router, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
 	SafeAreaView,
@@ -21,6 +21,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 
 import { APPLIANCES } from '@/constants/Appliance';
 import { searchInmetro } from '@/lib/inmetro';
+import React from 'react';
 
 type ManuelInputFields = {
 	[key: string]: {
@@ -31,7 +32,6 @@ type ManuelInputFields = {
 
 const ApplianceDetailsPage = () => {
 	const searchParams = useLocalSearchParams();
-	console.log(searchParams)
 	const { type } = searchParams;
 
 	const borderColor = useThemeColor({}, 'borderColor');
@@ -56,7 +56,7 @@ const ApplianceDetailsPage = () => {
 		const search = async () => {
 			const res = await searchInmetro(brandSearchQuery, modelSearchQuery, applianceType?.inmetroCode!)
 			setSearchResult(await res.json())
-			console.log(await res.json());
+			//console.log(await res.json());
 		}
 
 		if (hasSearch)
@@ -128,11 +128,11 @@ const ApplianceDetailsPage = () => {
 												borderBottomWidth: 1,
 												borderColor: '#E5E5EA',
 											}}
-											onPress={() => { }
-												//router.push(
-												//	`/(auth)/appliance/${appliance.type}`,
-												//)
-											}
+											onPress={() => {
+												router.push(
+													`/(auth)/appliance/finish?data=${encodeURIComponent(JSON.stringify(e))}&manualInput=false&type=${type}`,
+												)
+											}}
 											text={`${e.nomeMarca} ${e.nomeModelo}`}
 											textType='subtitle'
 											textProps={{
@@ -178,13 +178,17 @@ const ApplianceDetailsPage = () => {
 									onChangeText={(text) =>
 										setManualInput({
 											...manualInput,
-											[field.label]: text,
+											[field.attributeTo]: text,
 										})
 									}
 								/>
 							</View>
 						))}
-						<Button text='Adicionar' type='primary'></Button>
+						<Button text='Adicionar' type='primary' onPress={() => {
+							router.push(
+								`/(auth)/appliance/finish?data=${encodeURIComponent(JSON.stringify(manualInput))}&manualInput=true&type=${type}`,
+							)
+						}}></Button>
 					</View>
 				</ScrollView>
 			</PageContainer>

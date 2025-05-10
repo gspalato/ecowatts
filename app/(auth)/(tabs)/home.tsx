@@ -16,6 +16,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
+import React from 'react';
 
 const Home = () => {
 	const router = useRouter();
