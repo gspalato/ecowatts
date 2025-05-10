@@ -69,16 +69,6 @@ const Home = () => {
 				>
 					<IconButton
 						size={35}
-						onPress={() => router.push('/(auth)/graph')}
-					>
-						<FontAwesome6
-							name='chart-simple'
-							size={15}
-							color='black'
-						/>
-					</IconButton>
-					<IconButton
-						size={35}
 						onPress={() => router.push('/(auth)/user')}
 					>
 						<FontAwesome5 name='user-alt' size={15} color='black' />
