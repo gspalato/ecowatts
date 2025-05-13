@@ -2,7 +2,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { useTheme } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, SafeAreaView, Text, View } from 'react-native';
 
 import HeaderContainer from '@/components/HeaderContainer';
@@ -10,10 +10,22 @@ import { IconButton } from '@/components/IconButton';
 import { PageContainer } from '@/components/PageContainer';
 import { TabPageContainer } from '@/components/TabPageContainer';
 import { ThemedText } from '@/components/ThemedText';
+import { getAllEquipment } from '@/lib/supabase';
+import { calculateApplicanceConsumption } from '@/lib/inmetro';
 
 const Page = () => {
 	const router = useRouter();
 	const colors = useTheme().colors;
+
+	const [appliances, setAppliances] = useState<any[]>([]);
+	useEffect(() => {
+		const fetchData = async () => {
+			const appliances = await getAllEquipment();
+			setAppliances(appliances);
+		};
+
+		fetchData();
+	});
 
 	return (
 		<TabPageContainer style={{ flex: 1 }}>
@@ -28,24 +40,7 @@ const Page = () => {
 				</IconButton>
 			</HeaderContainer>
 			<FlatList
-				data={[
-					{
-						id: 1,
-						name: 'Geladeira',
-						location: 'Cozinha',
-						brand: 'Eletrolux',
-						model: 'IM7S',
-						consumption: '',
-					},
-					{
-						id: 2,
-						name: 'Televisão',
-						location: 'Sala de estar',
-						brand: 'Samsung',
-						model: 'QN65QN800BGXZD',
-						consumption: '',
-					},
-				]}
+				data={appliances.map(app => ({ ...app, consumption: calculateApplicanceConsumption(app, 'daily') }))}
 				renderItem={(item) => (
 					<View
 						style={{
@@ -84,7 +79,7 @@ const Page = () => {
 									type='defaultSemiBold'
 									style={{ color: '#777' }}
 								>
-									{item.item.location}
+									{item.item.location || 'Local Indefinido'}
 								</ThemedText>
 							</View>
 						</View>
@@ -98,7 +93,7 @@ const Page = () => {
 								width: '100%',
 							}}
 						>
-							<ThemedText type='small'>
+							<ThemedText type='small' style={{ maxWidth: '35%' }}>
 								{item.item.brand} {item.item.model}
 							</ThemedText>
 							<ThemedText type='small'>
@@ -106,7 +101,7 @@ const Page = () => {
 								<Text
 									style={{ fontFamily: 'Inter_600SemiBold' }}
 								>
-									{item.item.consumption || '0kWh'}
+									{`${item.item.consumption.toFixed(2)}kWh` || '0kWh'}
 								</Text>
 								.
 							</ThemedText>

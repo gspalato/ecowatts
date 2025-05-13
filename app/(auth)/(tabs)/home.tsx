@@ -1,14 +1,10 @@
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pressable } from 'react-native-gesture-handler';
-import { PieChart } from 'react-native-gifted-charts';
 
-import { Button } from '@/components/Button';
 import { IconButton } from '@/components/IconButton';
 import Logo from '@/components/Logo';
 import { TabPageContainer } from '@/components/TabPageContainer';
@@ -17,6 +13,9 @@ import { ThemedView } from '@/components/ThemedView';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 import React from 'react';
+import { calculateTotalConsumption } from '@/lib/inmetro';
+import { getAllEquipment } from '@/lib/supabase';
+import { kWHPrice } from '@/lib/energySupplier';
 
 const Home = () => {
 	const router = useRouter();
@@ -26,18 +25,25 @@ const Home = () => {
 	const borderColor = useThemeColor({}, 'borderColor');
 
 	const [selectedConsumptionTimespan, setSelectedConsumptionTimespan] =
-		useState('monthly');
+		useState<'hourly' | 'daily' | 'monthly' | 'annualy'>('monthly');
 
-	const exampleData = [
-		{
-			value: 47,
+	const [equipment, setEquipment] = useState<any[]>([]);
+	const [consumption, setConsumption] = useState<number>(0)
 
-			color: highlightColor,
-			gradientCenterColor: highlightColor,
-		},
+	useEffect(() => {
+		const fetchData = async () => {
+			const equipment = await getAllEquipment();
+			setEquipment(equipment);
 
-		{ value: 40, color: '#fff', gradientCenterColor: '#fff' },
-	];
+			const consumption = await calculateTotalConsumption(
+				selectedConsumptionTimespan
+			);
+			console.log(consumption)
+			setConsumption(consumption ?? 0);
+		};
+
+		fetchData();
+	}, [selectedConsumptionTimespan])
 
 	return (
 		<TabPageContainer
@@ -164,35 +170,15 @@ const Home = () => {
 					</View>
 
 					<View style={{ alignItems: 'center', marginTop: 20 }}>
-						<PieChart
-							data={exampleData}
-							donut
-							showGradient
-							radius={90}
-							innerRadius={70}
-							innerCircleColor={backgroundColor}
-							strokeWidth={StyleSheet.hairlineWidth}
-							strokeColor={borderColor}
-							centerLabelComponent={() => {
-								return (
-									<View
-										style={{
-											justifyContent: 'center',
-											alignItems: 'center',
-										}}
-									>
-										<ThemedText
-											type='title'
-											style={{
-												fontSize: 22,
-											}}
-										>
-											15.000Wh
-										</ThemedText>
-									</View>
-								);
+
+						<ThemedText
+							type='title'
+							style={{
+								fontSize: 22,
 							}}
-						/>
+						>
+							{consumption}kWh
+						</ThemedText>
 					</View>
 
 					<View
@@ -219,7 +205,7 @@ const Home = () => {
 								type='defaultSemiBold'
 								style={{ fontSize: 20 }}
 							>
-								02
+								{equipment.length}
 							</ThemedText>
 						</View>
 						<View style={{ alignItems: 'center' }}>
@@ -237,7 +223,7 @@ const Home = () => {
 								type='defaultSemiBold'
 								style={{ fontSize: 20 }}
 							>
-								R$ 9,00
+								R${((consumption ?? 0) * kWHPrice.elektro).toFixed(2)}
 							</ThemedText>
 						</View>
 					</View>
