@@ -1,14 +1,14 @@
-import { SafeAreaView, TextInput, View, StyleSheet } from 'react-native';
+import { SafeAreaView, TextInput, View, StyleSheet, FlatList } from 'react-native';
+import SafeView from '@/components/SafeView';
 
 import { PageContainer } from '@/components/PageContainer';
-import SafeView from '@/components/SafeView';
-import StackPageHeader from '@/components/StackPageHeader';
 import HeaderContainer from '@/components/HeaderContainer'
 import React from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { IconButton } from '@/components/IconButton';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Button } from '@/components/Button';
 
 const Page = () => {
 	return (
@@ -37,6 +37,73 @@ const Page = () => {
 						</TextInput>
 					</View>
 				</View>
+				<FlatList 
+					data={[
+						{
+							id: 1,
+							text: 'Aparência',
+							icon: 'eye-outline'
+						},
+						{
+							id: 2,
+							text: 'Sobre',
+							icon: 'information-circle-outline'
+						},
+						{
+							id: 3,
+							text: 'Ajuda & Suporte',
+							icon: 'headset',
+						},
+					]}
+
+					renderItem={({item}) => (
+						<View style={styles.settingContainer}>
+							<View style={styles.buttonSetting}>
+								<View style={{
+									display: 'flex',
+									flexDirection: 'row',
+									alignItems: 'center',
+									gap: 10,
+								}}>
+									<Ionicons name={item.icon as any} size={24} color="#FF6B00" />
+									<ThemedText type='default' style={{ color: '#363841' }}>
+										{item.text}
+									</ThemedText>
+								</View>
+								<View style={{
+									alignItems: 'center',
+									justifyContent: 'center',
+								}}>
+									<Ionicons name="arrow-forward-outline" size={18} color="#6A6C79" />
+								</View>
+							</View>
+						</View>
+					)}
+				/>
+				<View style={{
+					width: '100%',
+					position: 'absolute',
+					bottom: 0,
+				}}>
+					<Button 
+						text='Sair'
+						textType='default'
+						style={{
+							width: '100%',
+							height: 50,
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+							backgroundColor: '#FF6B00',
+							borderRadius: 10,
+						}}
+						textProps={{
+							style: {
+								fontSize: 18,
+							}
+						}}
+					/>
+				</View>
 			</PageContainer>
 		</SafeView>
 	);
@@ -49,6 +116,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#FFFFFF',
 		borderRadius: 16,
 		padding: 16,
+		marginBottom: 50,
 	},
 	searchInputContainer: {
 		flexDirection: 'row',
@@ -66,4 +134,21 @@ const styles = StyleSheet.create({
 		color: '#1C1C1E',
 	},
 
-})
+	settingContainer: {
+		width: '100%',
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	buttonSetting: {
+		width: '100%',
+		height: 50,
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		borderBottomWidth: 1,
+		borderColor: 'rgba(105, 105, 105, 0.2)',
+		marginBottom: 10,
+	},
+})	
