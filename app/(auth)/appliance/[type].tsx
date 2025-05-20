@@ -22,6 +22,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { APPLIANCES } from '@/constants/Appliance';
 import { searchInmetro } from '@/lib/inmetro';
 import React from 'react';
+import { pushEquipment } from '@/lib/supabase';
 
 type ManuelInputFields = {
 	[key: string]: {
@@ -185,9 +186,13 @@ const ApplianceDetailsPage = () => {
 							</View>
 						))}
 						<Button text='Adicionar' type='primary' onPress={() => {
-							router.push(
-								`/(auth)/appliance/finish?data=${encodeURIComponent(JSON.stringify(manualInput))}&manualInput=true&type=${type}`,
-							)
+							console.log('le manual input', encodeURIComponent(JSON.stringify(manualInput)));
+
+							pushEquipment(manualInput['name'], manualInput['location'], manualInput, {}, true)
+								.then(() => {
+									router.setParams({});
+									router.push('/(auth)/(tabs)/appliances');
+								})
 						}}></Button>
 					</View>
 				</ScrollView>

@@ -94,13 +94,13 @@ export default function Auth() {
 					>
 						<Input
 							onChangeText={(text: string) => setEmail(text)}
-							value={email}
+							//value={email}
 							placeholder='E-mail'
 							autoCapitalize={'none'}
 						/>
 						<Input
 							onChangeText={(text: string) => setPassword(text)}
-							value={password}
+							//value={password}
 							secureTextEntry={true}
 							placeholder='Senha'
 							autoCapitalize={'none'}

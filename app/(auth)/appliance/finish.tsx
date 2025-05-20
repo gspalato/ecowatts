@@ -22,7 +22,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { APPLIANCES } from '@/constants/Appliance';
 import { applianceTypeAttributeMap, convertToDatabaseSchema, searchInmetro } from '@/lib/inmetro';
 import React from 'react';
-import { supabase } from '@/lib/supabase';
+import { pushEquipment, supabase } from '@/lib/supabase';
 import { Picker } from '@react-native-picker/picker';
 import { Database } from '@/database.types';
 
@@ -33,6 +33,7 @@ const ApplianceFinishPage = () => {
 
     const borderColor = useThemeColor({}, 'borderColor');
 
+    console.log('unparsed data', data)
     const passedData = JSON.parse(decodeURIComponent(data));
     //console.log('passedData', passedData)
 
@@ -77,32 +78,14 @@ const ApplianceFinishPage = () => {
         return false;
     });
 
-    const pushToDatabase = async () => {
-        const obj = {
-            ...convertToDatabaseSchema(passedData, manuallyFilledFields),
-            name,
-            location: locationId
-        }
-
-        console.log('obj', obj);
-
-        const { data, error } = await supabase.from('equipment').insert(obj);
-        console.log('data', data);
-        if (error) {
-            console.log('error', error);
-            alert('Erro ao adicionar o eletrodoméstico.');
-            return;
-        }
-
-        alert('Eletrodoméstico adicionado com sucesso.');
-        router.setParams({});
-        router.push('/(auth)/(tabs)/appliances');
-    }
-
     // If all fields are filled, just push to the database.
     useEffect(() => {
         if (unfilledRequiredFields.length === 0) {
-            pushToDatabase();
+            pushEquipment(name, locationId, passedData, manuallyFilledFields, false)
+                .then(() => {
+                    router.setParams({});
+                    router.push('/(auth)/(tabs)/appliances');
+                })
         }
     }, []);
 
@@ -196,7 +179,11 @@ const ApplianceFinishPage = () => {
                                         return;
                                     }
 
-                                    pushToDatabase();
+                                    pushEquipment(name, locationId, passedData, manuallyFilledFields, false)
+                                        .then(() => {
+                                            router.setParams({});
+                                            router.push('/(auth)/(tabs)/appliances');
+                                        })
                                 }}></Button>
                             </View>
                         )
