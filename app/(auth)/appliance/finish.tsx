@@ -27,7 +27,7 @@ import { Picker } from '@react-native-picker/picker';
 import { Database } from '@/database.types';
 
 const ApplianceFinishPage = () => {
-    const searchParams = useGlobalSearchParams<{ data: string, manualInput: 'true' | 'false', type: string }>();
+    const searchParams = useLocalSearchParams<{ data: string, manualInput: 'true' | 'false', type: string }>();
     //console.log('searchparams', searchParams)
     const { data, manualInput } = searchParams;
 
@@ -97,97 +97,92 @@ const ApplianceFinishPage = () => {
                     style={{ marginBottom: 20 }}
                 />
                 <ScrollView style={styles.content}>
-                    {
-                        unfilledRequiredFields.length > 0 && (
-                            <View
-                                style={[
-                                    styles.fieldsContainer,
-                                    {
-                                        borderWidth: StyleSheet.hairlineWidth,
-                                        borderColor,
-                                    },
-                                ]}
-                            >
-                                <Text style={styles.sectionTitle}>
-                                    Algumas informações estão faltando...
-                                </Text>
-                                <View style={styles.inputGroup} key={'name'}>
-                                    <Text style={styles.label}>Nome do eletrodoméstico</Text>
+                    <View
+                        style={[
+                            styles.fieldsContainer,
+                            {
+                                borderWidth: StyleSheet.hairlineWidth,
+                                borderColor,
+                            },
+                        ]}
+                    >
+                        <Text style={styles.sectionTitle}>
+                            Algumas informações estão faltando...
+                        </Text>
+                        <View style={styles.inputGroup} key={'name'}>
+                            <Text style={styles.label}>Nome do eletrodoméstico</Text>
+                            <TextInput
+                                style={styles.input}
+                                //placeholder={field.placeholder}
+                                value={name}
+                                onChangeText={(text) => {
+                                    setName(text);
+                                }}
+                            />
+                        </View>
+                        <View style={styles.inputGroup} key={'location'}>
+                            <Text style={styles.label}>Local da casa</Text>
+                            {
+                                usersLocations.length === 0 && (
+                                    <Text style={[styles.label, { color: '#e66' }]}>
+                                        Você não tem locais cadastrados.{'\n'}Cadastre um local para continuar.
+                                    </Text>
+                                )
+                            }
+                            {
+                                usersLocations.length > 0 && (
+                                    <Picker
+                                        selectedValue={locationId}
+                                        onValueChange={(itemValue, itemIndex) => {
+                                            setLocationId(itemValue);
+                                        }}
+                                    >
+                                        {usersLocations.map((v) => (
+                                            <Picker.Item
+                                                key={v.id}
+                                                label={v.name}
+                                                value={v.id}
+                                            />
+                                        ))}
+                                    </Picker>
+                                )
+                            }
+                        </View>
+                        <View style={{ flexDirection: 'column', flex: 1, gap: 5 }}>
+                            {unfilledRequiredFields.map(([key, value]) => (
+                                <View style={styles.inputGroup} key={value.name}>
+                                    <Text style={styles.label}>{value.name}</Text>
                                     <TextInput
                                         style={styles.input}
                                         //placeholder={field.placeholder}
-                                        value={name}
+                                        value={manuallyFilledFields[value.code] || ''}
                                         onChangeText={(text) => {
-                                            setName(text);
+                                            setManuallyFilledFields((prev) => ({
+                                                ...prev,
+                                                [value.code]: text,
+                                            }))
                                         }}
                                     />
                                 </View>
-                                <View style={styles.inputGroup} key={'location'}>
-                                    <Text style={styles.label}>Local da casa</Text>
-                                    {
-                                        usersLocations.length === 0 && (
-                                            <Text style={[styles.label, { color: '#e66' }]}>
-                                                Você não tem locais cadastrados.{'\n'}Cadastre um local para continuar.
-                                            </Text>
-                                        )
-                                    }
-                                    {
-                                        usersLocations.length > 0 && (
-                                            <Picker
-                                                selectedValue={locationId}
-                                                onValueChange={(itemValue, itemIndex) => {
-                                                    setLocationId(itemValue);
-                                                }}
-                                            >
-                                                {usersLocations.map((v) => (
-                                                    <Picker.Item
-                                                        key={v.id}
-                                                        label={v.name}
-                                                        value={v.id}
-                                                    />
-                                                ))}
-                                            </Picker>
-                                        )
-                                    }
-                                </View>
-                                <View style={{ flexDirection: 'column', flex: 1, gap: 5 }}>
-                                    {unfilledRequiredFields.map(([key, value]) => (
-                                        <View style={styles.inputGroup} key={value.name}>
-                                            <Text style={styles.label}>{value.name}</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                //placeholder={field.placeholder}
-                                                value={manuallyFilledFields[value.code] || ''}
-                                                onChangeText={(text) => {
-                                                    setManuallyFilledFields((prev) => ({
-                                                        ...prev,
-                                                        [value.code]: text,
-                                                    }))
-                                                }}
-                                            />
-                                        </View>
-                                    ))}
-                                </View>
-                                <Button text='Adicionar' type='primary' onPress={() => {
-                                    // Check if all fields are filled.
-                                    const allFieldsFilled = unfilledRequiredFields.every(([key, { code }]) => {
-                                        return manuallyFilledFields[code] !== undefined && manuallyFilledFields[code] !== null && manuallyFilledFields[code] !== '';
-                                    }) && name.length > 0;
+                            ))}
+                        </View>
+                        <Button text='Adicionar' type='primary' onPress={() => {
+                            // Check if all fields are filled.
+                            const allFieldsFilled = unfilledRequiredFields.every(([key, { code }]) => {
+                                return manuallyFilledFields[code] !== undefined && manuallyFilledFields[code] !== null && manuallyFilledFields[code] !== '';
+                            }) && name.length > 0;
 
-                                    if (!allFieldsFilled) {
-                                        alert('Preencha todos os campos obrigatórios.');
-                                        return;
-                                    }
+                            if (!allFieldsFilled) {
+                                alert('Preencha todos os campos obrigatórios.');
+                                return;
+                            }
 
-                                    pushEquipment(name, locationId, passedData, manuallyFilledFields, false)
-                                        .then(() => {
-                                            router.setParams({});
-                                            router.push('/(auth)/(tabs)/appliances');
-                                        })
-                                }}></Button>
-                            </View>
-                        )
-                    }
+                            pushEquipment(name, locationId, passedData, manuallyFilledFields, false)
+                                .then(() => {
+                                    router.navigate('/(auth)/(tabs)/appliances');
+                                })
+                        }}></Button>
+                    </View>
                 </ScrollView>
             </PageContainer>
         </ThemedSafeView>

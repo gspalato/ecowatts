@@ -140,8 +140,16 @@ const ApplianceDetailsPage = () => {
 												}}
 												onPress={() => {
 													router.push(
-														`/(auth)/appliance/finish?data=${encodeURIComponent(JSON.stringify(e))}&manualInput=false&type=${type}`,
+														{
+															pathname: '/(auth)/appliance/finish',
+															params: {
+																data: JSON.stringify(e),
+																manualInput: 'false',
+																type,
+															},
+														},
 													)
+
 												}}
 												text={`${e.nomeMarca} ${e.nomeModelo}`}
 												textType='subtitle'
@@ -199,8 +207,7 @@ const ApplianceDetailsPage = () => {
 
 								pushEquipment(manualInput['name'], manualInput['location'], manualInput, {}, true)
 									.then(() => {
-										router.setParams({});
-										router.push('/(auth)/(tabs)/appliances');
+										router.push({ pathname: '/(auth)/(tabs)/appliances', params: {} });
 									})
 							}}></Button>
 						</View>

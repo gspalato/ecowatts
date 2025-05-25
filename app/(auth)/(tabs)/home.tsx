@@ -185,6 +185,7 @@ const Home = () => {
 							justifyContent: 'space-between',
 							alignItems: 'center',
 							marginBottom: 20,
+							zIndex: 50,
 						}}
 					>
 						<ThemedText type='title' style={{ fontSize: 20, alignSelf: 'center' }}>
@@ -241,7 +242,7 @@ const Home = () => {
 							width: '100%',
 							marginTop: 30,
 							paddingHorizontal: 10,
-
+							gap: 10,
 						}}
 					>
 						<View style={{

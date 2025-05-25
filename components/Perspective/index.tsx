@@ -23,8 +23,6 @@ import { PropsWithChildren, useCallback } from 'react';
 
 import React from 'react';
 
-const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
-
 const SquareSize = 170;
 
 export const Perspective: React.FC<{ canvasSize: { width: number, height: number } } & PropsWithChildren> = (props) => {
@@ -42,7 +40,7 @@ export const Perspective: React.FC<{ canvasSize: { width: number, height: number
         return interpolate(
             roll,
             [-1, 0, 1],
-            [-Math.PI / 8, 0, Math.PI / 8],
+            [Math.PI / 8, 0, -Math.PI / 8],
             Extrapolation.CLAMP,
         );
     });
@@ -64,8 +62,8 @@ export const Perspective: React.FC<{ canvasSize: { width: number, height: number
 
     const rTransform = useDerivedValue(() => {
         return [
-            { perspective: 750 },
-            { rotateY: rotateY.value },
+            { perspective: 300 },
+            { rotateY: -rotateY.value },
             { rotateX: rotateX.value },
         ];
     });

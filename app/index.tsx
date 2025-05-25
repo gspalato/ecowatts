@@ -72,6 +72,7 @@ export default function Auth() {
 		});
 
 		if (error) Alert.alert(error.message);
+
 		if (!session)
 			Alert.alert('Cheque seu e-mail para verificar sua conta!');
 
