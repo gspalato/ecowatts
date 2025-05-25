@@ -2,7 +2,7 @@ import Feather from '@expo/vector-icons/Feather';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Pressable } from 'react-native-gesture-handler';
 import { SelectList } from 'react-native-dropdown-select-list';
 import {
@@ -12,7 +12,14 @@ import {
 	Skia,
 	Shader,
 	vec,
-	RadialGradient
+	RadialGradient,
+	Group,
+	useFont,
+	Text as SkiaText,
+	RoundedRect,
+	Fill,
+	matchFont,
+	Mask
 } from "@shopify/react-native-skia";
 
 import { IconButton } from '@/components/IconButton';
@@ -26,6 +33,8 @@ import React from 'react';
 import { calculateTotalConsumption, formatWattHours } from '@/lib/inmetro';
 import { getAllEquipment } from '@/lib/supabase';
 import { kWHPrice } from '@/lib/energySupplier';
+import { Perspective } from '@/components/Perspective';
+import { UsageDisplay } from '@/components/UsageDisplay';
 
 const Home = () => {
 	const router = useRouter();
@@ -40,6 +49,14 @@ const Home = () => {
 	const [equipment, setEquipment] = useState<any[]>([]);
 	const [consumption, setConsumption] = useState<number>(0)
 
+	const [refreshing, setRefreshing] = useState(false);
+	const refresh = async () => {
+		const equipment = await getAllEquipment();
+		setEquipment(equipment);
+
+		recalculateConsumption(selectedConsumptionTimespan);
+	}
+
 	const recalculateConsumption = async (timespan: 'hourly' | 'daily' | 'monthly' | 'annualy' = 'monthly') => {
 		const consumption = await calculateTotalConsumption(
 			timespan
@@ -49,15 +66,10 @@ const Home = () => {
 	}
 
 	useEffect(() => {
-		const fetchData = async () => {
-			const equipment = await getAllEquipment();
-			setEquipment(equipment);
-
-			recalculateConsumption(selectedConsumptionTimespan);
-		};
-
-		fetchData();
+		refresh();
 	}, [selectedConsumptionTimespan])
+
+	const formattedConsumption = formatWattHours(consumption);
 
 	return (
 		<TabPageContainer
@@ -102,7 +114,10 @@ const Home = () => {
 					</IconButton>
 				</View>
 			</View>
-			<View
+			<ScrollView
+				refreshControl={
+					<RefreshControl refreshing={refreshing} onRefresh={refresh} />
+				}
 				style={{
 					borderRadius: 10,
 					flex: 1,
@@ -211,36 +226,8 @@ const Home = () => {
 						/>
 					</View>
 
-
-					<View style={{ alignItems: 'center', marginTop: 20, width: 230, height: 230, marginHorizontal: 'auto' }}>
-						<Canvas style={{ width: 230, height: 230 }}>
-							<Rect x={0} y={0} width={230} height={230}>
-								<RadialGradient
-									c={vec(115, 115)}
-									r={115}
-									colors={["#FF6B00ee", "#FF6B0000"]}
-								/>
-							</Rect>
-						</Canvas>
-						<View style={{
-							position: 'absolute',
-							top: 0,
-							bottom: 0,
-							flexDirection: 'column',
-							justifyContent: 'center',
-						}}>
-							<ThemedText
-								type='title'
-								style={{
-									lineHeight: 40,
-									fontSize: 40,
-									textAlign: 'center',
-									verticalAlign: 'middle',
-								}}
-							>
-								{formatWattHours(consumption)}
-							</ThemedText>
-						</View>
+					<View style={{ alignItems: 'center', marginTop: 20, width: '100%', height: 230, marginHorizontal: 'auto' }}>
+						<UsageDisplay consumption={consumption} />
 					</View>
 
 					<View
@@ -309,7 +296,7 @@ const Home = () => {
 						</View>
 					</View>
 				</View>
-			</View>
+			</ScrollView>
 		</TabPageContainer>
 	);
 };
