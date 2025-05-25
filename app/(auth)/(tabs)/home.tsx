@@ -51,10 +51,12 @@ const Home = () => {
 
 	const [refreshing, setRefreshing] = useState(false);
 	const refresh = async () => {
+		setRefreshing(true);
 		const equipment = await getAllEquipment();
 		setEquipment(equipment);
 
-		recalculateConsumption(selectedConsumptionTimespan);
+		await recalculateConsumption(selectedConsumptionTimespan);
+		setRefreshing(false);
 	}
 
 	const recalculateConsumption = async (timespan: 'hourly' | 'daily' | 'monthly' | 'annualy' = 'monthly') => {

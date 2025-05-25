@@ -125,7 +125,7 @@ export const UsageDisplay = (props: { consumption: number }) => {
     const color = interpolateColor(
         turbulenceFactor,
         [0, .5, 1],
-        ["#88ff99", "#00ff99", "#ff842b"],
+        ["#77ff88", "#00ff99", "#ff842b"],
     )
 
     // Animation values
