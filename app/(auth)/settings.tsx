@@ -9,20 +9,13 @@ import { IconButton } from '@/components/IconButton';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Button } from '@/components/Button';
+import StackPageHeader from '@/components/StackPageHeader';
 
 const Page = () => {
 	return (
 		<SafeView style={{ flex: 1, backgroundColor: '#F2F2F5' }}>
 			<PageContainer>
-				<HeaderContainer style={{ marginBottom: 20 }}>
-					<IconButton
-						size={35}
-						style={{ position: 'absolute', left: 0 }}
-					>
-						<AntDesign name="arrowleft" size={24} color="black" />
-					</IconButton>
-					<ThemedText type="title" style={{ height: '100%' }}>Settings</ThemedText>
-				</HeaderContainer>
+				<StackPageHeader title="Settings" />
 				<View style={styles.searchContainer}>
 					<View style={styles.searchInputContainer}>
 						<Ionicons
@@ -37,7 +30,7 @@ const Page = () => {
 						</TextInput>
 					</View>
 				</View>
-				<FlatList 
+				<FlatList
 					data={[
 						{
 							id: 1,
@@ -56,7 +49,7 @@ const Page = () => {
 						},
 					]}
 
-					renderItem={({item}) => (
+					renderItem={({ item }) => (
 						<View style={styles.settingContainer}>
 							<View style={styles.buttonSetting}>
 								<View style={{
@@ -85,7 +78,7 @@ const Page = () => {
 					position: 'absolute',
 					bottom: 0,
 				}}>
-					<Button 
+					<Button
 						text='Sair'
 						textType='default'
 						style={{
@@ -113,17 +106,16 @@ export default Page;
 
 const styles = StyleSheet.create({
 	searchContainer: {
-		backgroundColor: '#FFFFFF',
 		borderRadius: 16,
-		padding: 16,
-		marginBottom: 50,
+		marginBottom: 16,
+		marginTop: 16,
 	},
 	searchInputContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		backgroundColor: '#FFFFFF',
 		borderRadius: 12,
-		padding: 6,
+		padding: 10,
 		borderWidth: 1,
 		borderColor: '#E5E5EA',
 		gap: 5,
