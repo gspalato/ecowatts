@@ -2,6 +2,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
+	KeyboardAvoidingView,
+	Platform,
 	SafeAreaView,
 	ScrollView,
 	StyleSheet,
@@ -11,6 +13,7 @@ import {
 	View,
 } from 'react-native';
 import { useDebounceValue } from 'usehooks-ts'
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { Button } from '@/components/Button';
 import { PageContainer } from '@/components/PageContainer';
@@ -35,6 +38,7 @@ const ApplianceDetailsPage = () => {
 	const searchParams = useLocalSearchParams();
 	const { type } = searchParams;
 
+	const backgroundColor = useThemeColor({}, 'background');
 	const borderColor = useThemeColor({}, 'borderColor');
 
 	const [brandSearchQuery, setBrandSearchQuery] = useDebounceValue('', 500);
@@ -71,131 +75,137 @@ const ApplianceDetailsPage = () => {
 					title={`Registrar`}
 					style={{ marginBottom: 20 }}
 				/>
-				<ScrollView style={styles.content}>
-					{!manualInputInfo?.only && (
-						<>
-							<View
-								style={[
-									styles.searchContainer,
-									{
-										borderWidth: StyleSheet.hairlineWidth,
-										borderColor,
-									},
-								]}
-							>
-								<Text style={styles.sectionTitle}>
-									Pesquise pelo(a){' '}
-									{typeDisplayName?.toLowerCase()}.
-								</Text>
-								<View style={{ flexDirection: 'row', flex: 1, gap: 5 }}>
-									<View style={styles.searchInputContainer}>
-										<Ionicons
-											name='search'
-											size={20}
-											color='#ccc'
-										/>
-										<TextInput
-											style={styles.searchInput}
-											placeholder={`Marca`}
-											//value={brandSearchDisplayQuery}
-											onChangeText={(t) => setBrandSearchQuery(t)}
-										/>
+				<KeyboardAvoidingView
+					style={{ flex: 1 }}
+					keyboardVerticalOffset={75}
+					behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+				>
+					<ScrollView style={styles.content}>
+						{!manualInputInfo?.only && (
+							<>
+								<View
+									style={[
+										styles.searchContainer,
+										{
+											borderWidth: StyleSheet.hairlineWidth,
+											borderColor,
+										},
+									]}
+								>
+									<Text style={styles.sectionTitle}>
+										Pesquise pelo(a){' '}
+										{typeDisplayName?.toLowerCase()}.
+									</Text>
+									<View style={{ flexDirection: 'row', flex: 1, gap: 5 }}>
+										<View style={styles.searchInputContainer}>
+											<Ionicons
+												name='search'
+												size={20}
+												color='#ccc'
+											/>
+											<TextInput
+												style={styles.searchInput}
+												placeholder={`Marca`}
+												//value={brandSearchDisplayQuery}
+												onChangeText={(t) => setBrandSearchQuery(t)}
+											/>
+										</View>
+										<View style={styles.searchInputContainer}>
+											<Ionicons
+												name='search'
+												size={20}
+												color='#ccc'
+											/>
+											<TextInput
+												style={styles.searchInput}
+												placeholder={`Modelo`}
+												//value={modelSearchDisplayQuery}
+												onChangeText={(t) => setModelSearchQuery(t)}
+											/>
+										</View>
 									</View>
-									<View style={styles.searchInputContainer}>
-										<Ionicons
-											name='search'
-											size={20}
-											color='#ccc'
-										/>
-										<TextInput
-											style={styles.searchInput}
-											placeholder={`Modelo`}
-											//value={modelSearchDisplayQuery}
-											onChangeText={(t) => setModelSearchQuery(t)}
-										/>
-									</View>
+									<ScrollView style={{ display: hasSearch ? 'flex' : 'none', flex: 1 }}>
+										{searchResult.content.slice(0, 10).map((e: any) => (
+											<Button
+												key={e.codigoBarras}
+												style={{
+													flexDirection: 'row',
+													width: '100%',
+													justifyContent: 'center',
+													alignItems: 'center',
+													paddingVertical: 20,
+													borderWidth: 0,
+													borderBottomWidth: 1,
+													borderColor: '#E5E5EA',
+												}}
+												onPress={() => {
+													router.push(
+														`/(auth)/appliance/finish?data=${encodeURIComponent(JSON.stringify(e))}&manualInput=false&type=${type}`,
+													)
+												}}
+												text={`${e.nomeMarca} ${e.nomeModelo}`}
+												textType='subtitle'
+												textProps={{
+													style: {
+														fontSize: 16,
+														textAlign: 'center',
+														width: 'auto',
+													},
+												}}
+												type='secondary'
+											/>
+										))}
+									</ScrollView>
 								</View>
-								<ScrollView style={{ display: hasSearch ? 'flex' : 'none', flex: 1 }}>
-									{searchResult.content.slice(0, 10).map((e: any) => (
-										<Button
-											key={e.codigoBarras}
-											style={{
-												flexDirection: 'row',
-												width: '100%',
-												justifyContent: 'center',
-												alignItems: 'center',
-												paddingVertical: 20,
-												borderWidth: 0,
-												borderBottomWidth: 1,
-												borderColor: '#E5E5EA',
-											}}
-											onPress={() => {
-												router.push(
-													`/(auth)/appliance/finish?data=${encodeURIComponent(JSON.stringify(e))}&manualInput=false&type=${type}`,
-												)
-											}}
-											text={`${e.nomeMarca} ${e.nomeModelo}`}
-											textType='subtitle'
-											textProps={{
-												style: {
-													fontSize: 16,
-													textAlign: 'center',
-													width: 'auto',
-												},
-											}}
-											type='secondary'
-										/>
-									))}
-								</ScrollView>
-							</View>
 
-							<View style={styles.divider}>
-								<View style={styles.dividerLine} />
-								<Text style={styles.dividerText}>ou</Text>
-								<View style={styles.dividerLine} />
-							</View>
-						</>
-					)}
+								<View style={styles.divider}>
+									<View style={styles.dividerLine} />
+									<Text style={styles.dividerText}>ou</Text>
+									<View style={styles.dividerLine} />
+								</View>
+							</>
+						)}
 
-					<View
-						style={[
-							styles.manualInputContainer,
-							{
-								borderWidth: StyleSheet.hairlineWidth,
-								borderColor,
-							},
-						]}
-					>
-						<Text style={styles.sectionTitle}>
-							Insira manualmente
-						</Text>
-						{manualInputInfo?.fields?.map((field) => (
-							<View style={styles.inputGroup} key={field.label}>
-								<Text style={styles.label}>{field.label}</Text>
-								<TextInput
-									style={styles.input}
-									placeholder={field.placeholder}
-									value={manualInput[field.label]}
-									onChangeText={(text) =>
-										setManualInput({
-											...manualInput,
-											[field.attributeTo]: text,
-										})
-									}
-								/>
-							</View>
-						))}
-						<Button text='Adicionar' type='primary' onPress={() => {
-							console.log('le manual input', encodeURIComponent(JSON.stringify(manualInput)));
+						<View
+							style={[
+								styles.manualInputContainer,
+								{
+									borderWidth: StyleSheet.hairlineWidth,
+									borderColor,
+								},
+							]}
+						>
+							<Text style={styles.sectionTitle}>
+								Insira manualmente
+							</Text>
+							{manualInputInfo?.fields?.map((field) => (
+								<View style={styles.inputGroup} key={field.label}>
+									<Text style={styles.label}>{field.label}</Text>
+									<TextInput
+										style={styles.input}
+										placeholder={field.placeholder}
+										value={manualInput[field.label]}
+										onChangeText={(text) =>
+											setManualInput({
+												...manualInput,
+												[field.attributeTo]: text,
+											})
+										}
+									/>
+								</View>
+							))}
+							<Button text='Adicionar' type='primary' onPress={() => {
+								console.log('le manual input', encodeURIComponent(JSON.stringify(manualInput)));
 
-							pushEquipment(manualInput['name'], manualInput['location'], manualInput, {}, true)
-								.then(() => {
-									router.setParams({});
-									router.push('/(auth)/(tabs)/appliances');
-								})
-						}}></Button>
-					</View>
-				</ScrollView>
+								pushEquipment(manualInput['name'], manualInput['location'], manualInput, {}, true)
+									.then(() => {
+										router.setParams({});
+										router.push('/(auth)/(tabs)/appliances');
+									})
+							}}></Button>
+						</View>
+					</ScrollView>
+				</KeyboardAvoidingView>
 			</PageContainer>
 		</ThemedSafeView>
 	);
@@ -209,6 +219,7 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		padding: 16,
+		paddingBottom: 0,
 	},
 	searchContainer: {
 		backgroundColor: '#FFFFFF',

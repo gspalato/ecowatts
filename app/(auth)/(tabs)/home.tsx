@@ -4,6 +4,16 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Pressable } from 'react-native-gesture-handler';
+import { SelectList } from 'react-native-dropdown-select-list';
+import {
+	Canvas,
+	Rect,
+	LinearGradient,
+	Skia,
+	Shader,
+	vec,
+	RadialGradient
+} from "@shopify/react-native-skia";
 
 import { IconButton } from '@/components/IconButton';
 import Logo from '@/components/Logo';
@@ -13,7 +23,7 @@ import { ThemedView } from '@/components/ThemedView';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 import React from 'react';
-import { calculateTotalConsumption } from '@/lib/inmetro';
+import { calculateTotalConsumption, formatWattHours } from '@/lib/inmetro';
 import { getAllEquipment } from '@/lib/supabase';
 import { kWHPrice } from '@/lib/energySupplier';
 
@@ -30,16 +40,20 @@ const Home = () => {
 	const [equipment, setEquipment] = useState<any[]>([]);
 	const [consumption, setConsumption] = useState<number>(0)
 
+	const recalculateConsumption = async (timespan: 'hourly' | 'daily' | 'monthly' | 'annualy' = 'monthly') => {
+		const consumption = await calculateTotalConsumption(
+			timespan
+		);
+		console.log(consumption)
+		setConsumption(consumption ?? 0);
+	}
+
 	useEffect(() => {
 		const fetchData = async () => {
 			const equipment = await getAllEquipment();
 			setEquipment(equipment);
 
-			const consumption = await calculateTotalConsumption(
-				selectedConsumptionTimespan
-			);
-			console.log(consumption)
-			setConsumption(consumption ?? 0);
+			recalculateConsumption(selectedConsumptionTimespan);
 		};
 
 		fetchData();
@@ -101,7 +115,6 @@ const Home = () => {
 				>
 					<ThemedView
 						style={{
-							marginBottom: 30,
 							backgroundColor: '#fff',
 							padding: 20,
 							borderRadius: 10,
@@ -124,11 +137,11 @@ const Home = () => {
 						<View style={{ flexDirection: 'row' }}>
 							<ThemedText style={{ color: '#666' }}>
 								Descubra o{' '}
-								<ThemedText style={{ color: '#FF6B00' }}>
+								<ThemedText style={{ color: '#FF6B00', fontFamily: 'Inter_500Medium' }}>
 									consumo
 								</ThemedText>{' '}
 								de cada equipamento e veja como{' '}
-								<ThemedText style={{ color: '#FF6B00' }}>
+								<ThemedText style={{ color: '#FF6B00', fontFamily: 'Inter_500Medium' }}>
 									economizar energia
 								</ThemedText>{' '}
 								de forma inteligente!
@@ -142,6 +155,10 @@ const Home = () => {
 					</ThemedView>
 				</Pressable>
 
+				<View style={styles.divider}>
+					<View style={styles.dividerLine} />
+				</View>
+
 				<View>
 					<View
 						style={{
@@ -151,34 +168,79 @@ const Home = () => {
 							marginBottom: 20,
 						}}
 					>
-						<ThemedText type='title' style={{ fontSize: 20 }}>
+						<ThemedText type='title' style={{ fontSize: 20, alignSelf: 'center' }}>
 							Consumo Geral
 						</ThemedText>
-						<View
-							style={{
-								backgroundColor: '#fff',
-								padding: 7,
-								borderRadius: 10,
-								minWidth: 90,
-								alignItems: 'center',
-								borderColor,
+						<SelectList
+							onSelect={() => recalculateConsumption(selectedConsumptionTimespan)}
+							setSelected={setSelectedConsumptionTimespan}
+							data={[
+								{ key: 'hourly', value: 'Horário' },
+								{ key: 'daily', value: 'Diário' },
+								{ key: 'monthly', value: 'Mensal' },
+								{ key: 'annualy', value: 'Anual' },
+							]}
+							defaultOption={{ key: 'monthly', value: 'Mensal' }}
+							placeholder='Mensal'
+							save="key"
+							search={false}
+							fontFamily='Outfit_500Medium'
+							boxStyles={{
 								borderWidth: StyleSheet.hairlineWidth,
+								borderColor,
+								backgroundColor: '#fff',
+								borderRadius: 10,
+								paddingVertical: 5,
+								paddingHorizontal: 10,
+								minWidth: 100,
 							}}
-						>
-							<ThemedText>Mensal</ThemedText>
-						</View>
+							inputStyles={{
+								fontSize: 14,
+								lineHeight: 22,
+							}}
+							dropdownStyles={{
+								borderWidth: StyleSheet.hairlineWidth,
+								borderColor,
+								backgroundColor: '#fff',
+								position: 'absolute',
+								top: 25,
+								width: 100,
+								zIndex: 10
+							}}
+
+						/>
 					</View>
 
-					<View style={{ alignItems: 'center', marginTop: 20 }}>
 
-						<ThemedText
-							type='title'
-							style={{
-								fontSize: 22,
-							}}
-						>
-							{consumption}kWh
-						</ThemedText>
+					<View style={{ alignItems: 'center', marginTop: 20, width: 230, height: 230, marginHorizontal: 'auto' }}>
+						<Canvas style={{ width: 230, height: 230 }}>
+							<Rect x={0} y={0} width={230} height={230}>
+								<RadialGradient
+									c={vec(115, 115)}
+									r={115}
+									colors={["#FF6B00ee", "#FF6B0000"]}
+								/>
+							</Rect>
+						</Canvas>
+						<View style={{
+							position: 'absolute',
+							top: 0,
+							bottom: 0,
+							flexDirection: 'column',
+							justifyContent: 'center',
+						}}>
+							<ThemedText
+								type='title'
+								style={{
+									lineHeight: 40,
+									fontSize: 40,
+									textAlign: 'center',
+									verticalAlign: 'middle',
+								}}
+							>
+								{formatWattHours(consumption)}
+							</ThemedText>
+						</View>
 					</View>
 
 					<View
@@ -187,10 +249,20 @@ const Home = () => {
 							justifyContent: 'space-between',
 							width: '100%',
 							marginTop: 30,
-							paddingHorizontal: 20,
+							paddingHorizontal: 10,
+
 						}}
 					>
-						<View style={{ alignItems: 'center' }}>
+						<View style={{
+							alignItems: 'center',
+							backgroundColor: '#fff',
+							borderColor,
+							borderWidth: StyleSheet.hairlineWidth,
+							borderRadius: 10,
+							padding: 10,
+							paddingVertical: 15,
+							width: 175,
+						}}>
 							<ThemedText
 								type='title'
 								style={{
@@ -199,7 +271,7 @@ const Home = () => {
 									fontSize: 18,
 								}}
 							>
-								Aparelhos cadastrados
+								Aparelhos
 							</ThemedText>
 							<ThemedText
 								type='defaultSemiBold'
@@ -208,7 +280,16 @@ const Home = () => {
 								{equipment.length}
 							</ThemedText>
 						</View>
-						<View style={{ alignItems: 'center' }}>
+						<View style={{
+							alignItems: 'center',
+							backgroundColor: '#fff',
+							borderColor,
+							borderWidth: StyleSheet.hairlineWidth,
+							borderRadius: 10,
+							padding: 10,
+							paddingVertical: 15,
+							width: 175
+						}}>
 							<ThemedText
 								type='title'
 								style={{
@@ -223,7 +304,7 @@ const Home = () => {
 								type='defaultSemiBold'
 								style={{ fontSize: 20 }}
 							>
-								R${((consumption ?? 0) * kWHPrice.elektro).toFixed(2)}
+								R${((consumption ?? 0) / 1000 * kWHPrice.elektro).toFixed(2)}
 							</ThemedText>
 						</View>
 					</View>
@@ -234,3 +315,16 @@ const Home = () => {
 };
 
 export default Home;
+
+const styles = StyleSheet.create({
+	divider: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginVertical: 24,
+	},
+	dividerLine: {
+		flex: 1,
+		height: 1,
+		backgroundColor: '#E5E5EA',
+	},
+});

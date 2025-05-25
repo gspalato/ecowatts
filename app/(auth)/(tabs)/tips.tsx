@@ -1,4 +1,4 @@
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 
 import SafeView from '@/components/SafeView';
 import { TabPageContainer } from '@/components/TabPageContainer';
@@ -7,8 +7,11 @@ import { ThemedText } from '@/components/ThemedText';
 import { FlatList } from 'react-native';
 import React from 'react';
 import Entypo from '@expo/vector-icons/Entypo';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 const Page = () => {
+	const borderColor = useThemeColor({}, 'borderColor');
+
 	return (
 		<TabPageContainer style={{ flex: 1 }}>
 			<HeaderContainer>
@@ -19,7 +22,7 @@ const Page = () => {
 					{
 						id: 1,
 						title: 'Aparelhos em stand-by',
-						icon: 'controller-paus', 
+						icon: 'controller-paus',
 						text: 'Muitos aparelhos, como televisores, computadores e videogames, continuam consumindo energia mesmo quando estão em stand-by. Esse consumo, embora pequeno por cada aparelho, pode se acumular ao longo do tempo e aumentar sua conta de energia.'
 					},
 					{
@@ -59,21 +62,24 @@ const Page = () => {
 						text: 'Mantenha portas e janelas fechadas ao usar o ar-condicionado e limpe os filtros regularmente. Isso otimiza o funcionamento do aparelho, economiza energia e ainda melhora a qualidade do ar.'
 					},
 				]}
-				renderItem={({item}) => (
+				contentContainerStyle={{
+					paddingBottom: 20,
+				}}
+				renderItem={({ item }) => (
 					<View
 						style={{
-							width:'100%',
+							width: '100%',
 							padding: 20,
 							display: 'flex',
 							flexDirection: 'column',
 							justifyContent: 'center',
 							alignItems: 'center',
-							gap:10,
+							gap: 0,
 						}}
 					>
-						<View 
+						<View
 							style={{
-								width:'100%',
+								width: '100%',
 								display: 'flex',
 								flexDirection: 'column',
 								justifyContent: 'center',
@@ -81,15 +87,17 @@ const Page = () => {
 								gap: 10,
 								backgroundColor: '#ffff',
 								borderRadius: 10,
-								padding:20,
-								shadowColor: 'rgba(0, 0, 0, 0.47)',
-								shadowOffset: { width: 1, height: 6 },
-								shadowOpacity: 0.47,
-								shadowRadius: 28,
-								elevation: 5,
+								padding: 20,
+								borderWidth: StyleSheet.hairlineWidth,
+								borderColor,
+								//shadowColor: 'rgba(0, 0, 0, 0.2)',
+								//shadowOffset: { width: 0, height: 0 },
+								//shadowOpacity: 0.47,
+								//shadowRadius: 5,
+								//elevation: 0,
 							}}
 						>
-							<View 
+							<View
 								style={{
 									width: '100%',
 									display: 'flex',
@@ -101,9 +109,9 @@ const Page = () => {
 								<View
 									style={{
 										width: 40,
-										height:40,
+										height: 40,
 										borderRadius: 5,
-										backgroundColor:'#FF6B00',
+										backgroundColor: '#FF6B00',
 										display: 'flex',
 										justifyContent: 'center',
 										alignItems: 'center',
@@ -112,9 +120,9 @@ const Page = () => {
 									<Entypo name={item.icon as any} size={18} color='white'></Entypo>
 								</View>
 								<View>
-									<ThemedText 
+									<ThemedText
 										type='subtitle'
-										style={{fontSize: 16}}
+										style={{ fontSize: 16 }}
 									>
 										{item.title}
 									</ThemedText>
@@ -128,7 +136,7 @@ const Page = () => {
 						</View>
 					</View>
 				)}
-				/>
+			/>
 		</TabPageContainer>
 	);
 };

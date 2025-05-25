@@ -1,5 +1,6 @@
 import {
 	Inter_400Regular,
+	Inter_500Medium,
 	Inter_600SemiBold,
 	Inter_700Bold,
 	Inter_900Black,
@@ -29,6 +30,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ProfileProvider } from '@/lib/profile';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import React from 'react';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,6 +38,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 	const [loaded, error] = useFonts({
 		Inter_400Regular,
+		Inter_500Medium,
 		Inter_600SemiBold,
 		Inter_700Bold,
 		Inter_900Black,

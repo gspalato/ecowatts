@@ -79,15 +79,15 @@ const ApplianceFinishPage = () => {
     });
 
     // If all fields are filled, just push to the database.
-    useEffect(() => {
-        if (unfilledRequiredFields.length === 0) {
-            pushEquipment(name, locationId, passedData, manuallyFilledFields, false)
-                .then(() => {
-                    router.setParams({});
-                    router.push('/(auth)/(tabs)/appliances');
-                })
-        }
-    }, []);
+    //useEffect(() => {
+    //    if (unfilledRequiredFields.length === 0) {
+    //        pushEquipment(name, locationId, passedData, manuallyFilledFields, false)
+    //            .then(() => {
+    //                router.setParams({});
+    //                router.push('/(auth)/(tabs)/appliances');
+    //            })
+    //    }
+    //}, []);
 
     return (
         <ThemedSafeView style={styles.container}>

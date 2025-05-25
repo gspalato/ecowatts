@@ -112,99 +112,134 @@ export const convertToDatabaseSchema = (applianceData: InmetroData, manuallyFill
 	return obj
 }
 
+const roundToDecimal = (num: number, decimals: number = 4): number => {
+	return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
+};
+
+export const formatWattHours = (wattHours: number): string => {
+	const absWattHours = Math.abs(wattHours);
+
+	if (absWattHours >= 1000000000) {
+		// Gigawatt-hours
+		return `${roundToDecimal(wattHours / 1000000000, 2)} GWh`;
+	} else if (absWattHours >= 1000000) {
+		// Megawatt-hours
+		return `${roundToDecimal(wattHours / 1000000, 2)} MWh`;
+	} else if (absWattHours >= 1000) {
+		// Kilowatt-hours
+		return `${roundToDecimal(wattHours / 1000, 2)} kWh`;
+	} else if (absWattHours >= 1) {
+		// Watt-hours
+		return `${roundToDecimal(wattHours, 2)} Wh`;
+	} else if (absWattHours >= 0.001) {
+		// Milliwatt-hours
+		return `${roundToDecimal(wattHours * 1000, 2)} mWh`;
+	} else if (absWattHours >= 0.000001) {
+		// Microwatt-hours
+		return `${roundToDecimal(wattHours * 1000000, 2)} µWh`;
+	} else {
+		// Very small values, just show as watt-hours
+		return `${roundToDecimal(wattHours, 6)} Wh`;
+	}
+};
+
 export const calculateApplicanceConsumption = (
 	appliance: Database['public']['Tables']['equipment']['Row'],
 	time: 'hourly' | 'daily' | 'monthly' | 'annualy'
-) => {
-	let consumption = 0;
+): number => {
+	console.log('recalculating consumption for', appliance, time);
+	let consumptionWh = 0; // Working in watt-hours
 
 	if (appliance.monthly_consumption_kwh) {
-		// If the appliance has a monthly consumption, we can calculate the consumption based on the time.
+		// Convert kWh to Wh first
+		const monthlyWh = appliance.monthly_consumption_kwh * 1000;
 		switch (time) {
 			case 'hourly':
-				consumption += appliance.monthly_consumption_kwh / 30 / 24;
+				consumptionWh = monthlyWh / 30 / 24;
 				break;
 			case 'daily':
-				consumption += appliance.monthly_consumption_kwh / 30;
+				consumptionWh = monthlyWh / 30;
 				break;
 			case 'monthly':
-				consumption += appliance.monthly_consumption_kwh;
+				consumptionWh = monthlyWh;
 				break;
 			case 'annualy':
-				consumption += appliance.monthly_consumption_kwh * 12;
+				consumptionWh = monthlyWh * 12;
 				break;
 		}
 	} else if (appliance.hourly_consumption_in_use_kwh) {
-		// If the appliance has an hourly consumption, we can calculate the consumption based on the time.
+		// Convert kWh to Wh first
+		const hourlyWh = appliance.hourly_consumption_in_use_kwh * 1000;
 		switch (time) {
 			case 'hourly':
-				consumption += appliance.hourly_consumption_in_use_kwh;
+				consumptionWh = hourlyWh;
 				break;
 			case 'daily':
-				consumption += appliance.hourly_consumption_in_use_kwh * 24;
+				consumptionWh = hourlyWh * 24;
 				break;
 			case 'monthly':
-				consumption += appliance.hourly_consumption_in_use_kwh * 24 * 30;
+				consumptionWh = hourlyWh * 24 * 30;
 				break;
 			case 'annualy':
-				consumption += appliance.hourly_consumption_in_use_kwh * 24 * 30 * 12;
+				consumptionWh = hourlyWh * 24 * 30 * 12;
 				break;
 		}
 	} else if (appliance.daily_standby_consumption_kwh) {
-		// If the appliance has a daily standby consumption, we can calculate the consumption based on the time.
+		// Convert kWh to Wh first
+		const dailyWh = appliance.daily_standby_consumption_kwh * 1000;
 		switch (time) {
 			case 'hourly':
-				consumption += appliance.daily_standby_consumption_kwh / 24;
+				consumptionWh = dailyWh / 24;
 				break;
 			case 'daily':
-				consumption += appliance.daily_standby_consumption_kwh;
+				consumptionWh = dailyWh;
 				break;
 			case 'monthly':
-				consumption += appliance.daily_standby_consumption_kwh * 30;
+				consumptionWh = dailyWh * 30;
 				break;
 			case 'annualy':
-				consumption += appliance.daily_standby_consumption_kwh * 30 * 12;
+				consumptionWh = dailyWh * 30 * 12;
 				break;
 		}
 	} else if (appliance.power && appliance.daily_usage_hours) {
-		// If the appliance has a power and daily usage hours, we can calculate the consumption based on the time.
+		// Power is already in watts, calculate watt-hours directly
 		switch (time) {
 			case 'hourly':
-				consumption += (appliance.power / 1000) * appliance.daily_usage_hours / 24;
+				consumptionWh = appliance.power * appliance.daily_usage_hours / 24;
 				break;
 			case 'daily':
-				consumption += (appliance.power / 1000) * appliance.daily_usage_hours;
+				consumptionWh = appliance.power * appliance.daily_usage_hours;
 				break;
 			case 'monthly':
-				consumption += (appliance.power / 1000) * appliance.daily_usage_hours * 30;
+				consumptionWh = appliance.power * appliance.daily_usage_hours * 30;
 				break;
 			case 'annualy':
-				consumption += (appliance.power / 1000) * appliance.daily_usage_hours * 30 * 12;
+				consumptionWh = appliance.power * appliance.daily_usage_hours * 30 * 12;
 				break;
 		}
 	}
 
-	return consumption;
-}
+	return consumptionWh
+};
 
 /**
  * Calculate the consumption of all appliances based on the time.
  * @param time - The time period to calculate the consumption for. Can be 'hourly', 'daily', 'monthly' or 'annualy'.
- * @returns The total consumption of all appliances in kWh.
-*/
-export const calculateTotalConsumption = async (time: 'hourly' | 'daily' | 'monthly' | 'annualy') => {
-	let consumption = 0;
-
+ * @returns The total consumption of all appliances in watt-hours (Wh).
+ */
+export const calculateTotalConsumption = async (time: 'hourly' | 'daily' | 'monthly' | 'annualy'): Promise<number> => {
 	// Get all appliances from the database and calculate the consumption based on the time.
-	// For that, we'll need to get the consumption of each appliance and multiply by the time.
-
 	const { data, error } = await supabase.from('equipment').select('*');
+
 	if (error) {
 		console.error('Error fetching appliances:', error);
-		return;
+		return 0;
 	}
 
-	data.map((entry: Database['public']['Tables']['equipment']['Row']) => consumption += calculateApplicanceConsumption(entry, time))
+	// Use reduce to sum up all appliance consumptions
+	const totalConsumptionWh = data.reduce((total, appliance) => {
+		return total + calculateApplicanceConsumption(appliance, time);
+	}, 0);
 
-	return consumption;
-}
+	return totalConsumptionWh
+};
