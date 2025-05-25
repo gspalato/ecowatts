@@ -15,7 +15,7 @@ const Page = () => {
 	return (
 		<TabPageContainer style={{ flex: 1 }}>
 			<HeaderContainer>
-				<ThemedText type='title'>Tips</ThemedText>
+				<ThemedText type='title'>Dicas</ThemedText>
 			</HeaderContainer>
 			<FlatList
 				data={[

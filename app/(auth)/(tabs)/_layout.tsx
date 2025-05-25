@@ -101,7 +101,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name='appliances'
 				options={{
-					title: 'Appliances',
+					title: 'Aparelhos',
 					tabBarIcon: ({ color }) => (
 						<FontAwesome5 name='plug' size={20} color={color} />
 					),
@@ -110,7 +110,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name='tips'
 				options={{
-					title: 'Tips',
+					title: 'Dicas',
 					tabBarIcon: ({ color }) => (
 						<MaterialIcons
 							name='lightbulb'

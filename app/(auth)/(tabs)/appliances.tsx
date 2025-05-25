@@ -33,7 +33,7 @@ const Page = () => {
 	return (
 		<TabPageContainer style={{ flex: 1 }}>
 			<HeaderContainer>
-				<ThemedText type='title'>Appliances</ThemedText>
+				<ThemedText type='title'>Aparelhos</ThemedText>
 				<IconButton
 					size={35}
 					onPress={() => router.push('/(auth)/register')}

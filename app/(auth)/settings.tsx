@@ -15,7 +15,7 @@ const Page = () => {
 	return (
 		<SafeView style={{ flex: 1, backgroundColor: '#F2F2F5' }}>
 			<PageContainer>
-				<StackPageHeader title="Settings" />
+				<StackPageHeader title="Configurações" />
 				<View style={styles.searchContainer}>
 					<View style={styles.searchInputContainer}>
 						<Ionicons
