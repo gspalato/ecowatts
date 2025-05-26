@@ -1,31 +1,42 @@
-import "react";
-import { Perspective } from "./Perspective";
-import { useEffect, useState } from "react";
-
 import {
-    Rect,
-    Skia,
-    vec,
-    RadialGradient,
-    useFont,
-    Text as SkiaText,
-    Fill,
-    Mask,
-    interpolate,
-    Turbulence,
-    DisplacementMap,
-    useClock,
-    Shader,
-    Blend,
-    LinearGradient,
-    Group,
-    Shadow,
-} from "@shopify/react-native-skia";
-import React from "react";
-import { formatWattHours } from "@/lib/inmetro";
-import { Easing, Extrapolation, interpolateColor, useDerivedValue, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { hexToRGB } from "@/lib/utils";
+	Blend,
+	DisplacementMap,
+	Fill,
+	Group,
+	interpolate,
+	LinearGradient,
+	Mask,
+	RadialGradient,
+	Rect,
+	Shader,
+	Shadow,
+	Skia,
+	Text as SkiaText,
+	Turbulence,
+	useClock,
+	useFont,
+	vec,
+} from '@shopify/react-native-skia';
+import 'react';
+import { useEffect, useState } from 'react';
+import React from 'react';
+import {
+	Easing,
+	Extrapolation,
+	interpolateColor,
+	useDerivedValue,
+	useSharedValue,
+	withRepeat,
+	withSequence,
+	withTiming,
+} from 'react-native-reanimated';
+
+import { formatWattHours } from '@/lib/inmetro';
+import { hexToRGB } from '@/lib/utils';
+
+import { useThemeColor } from '@/hooks/useThemeColor';
+
+import { Perspective } from './Perspective';
 
 const shader = Skia.RuntimeEffect.Make(`
 // turbulence_displace.sksl
@@ -103,71 +114,76 @@ half4 main(float2 fragCoord) {
 `)!;
 
 export const UsageDisplay = (props: { consumption: number }) => {
-    const backgroundColor = useThemeColor({}, 'background');
-    const font = useFont(require('../assets/fonts/Unbounded-Bold.ttf'), 35)!;
+	const backgroundColor = useThemeColor({}, 'background');
+	const font = useFont(require('../assets/fonts/Unbounded-Bold.ttf'), 35)!;
 
-    const formattedConsumption = formatWattHours(props.consumption);
+	const formattedConsumption = formatWattHours(props.consumption);
 
-    const canvasSize = { height: 400, width: 500 };
-    const rectSize = { height: 300, width: 300 };
+	const canvasSize = { height: 400, width: 500 };
+	const rectSize = { height: 300, width: 300 };
 
-    const scale = interpolate(
-        props.consumption,
-        [0, 875 * 1000, 1200 * 1000],
-        [115, 125, rectSize.height / 2 - 15],
-        Extrapolation.CLAMP,
-    );
+	const scale = interpolate(
+		props.consumption,
+		[0, 875 * 1000, 1200 * 1000],
+		[115, 125, rectSize.height / 2 - 15],
+		Extrapolation.CLAMP,
+	);
 
-    const turbulenceFactor = interpolate(
-        props.consumption,
-        [0, 875 * 1000, 1200 * 1000],
-        [0, .5, 1],
-        Extrapolation.CLAMP,
-    );
+	const turbulenceFactor = interpolate(
+		props.consumption,
+		[0, 875 * 1000, 1200 * 1000],
+		[0, 0.5, 1],
+		Extrapolation.CLAMP,
+	);
 
-    const color = interpolateColor(
-        turbulenceFactor,
-        [0, .5, 1],
-        ["#77ff88", "#00ff99", "#ff842b"],
-    )
+	const color = interpolateColor(
+		turbulenceFactor,
+		[0, 0.5, 1],
+		['#77ff88', '#00ff99', '#ff842b'],
+	);
 
-    // Animation values
-    const radius = useSharedValue(scale);
-    radius.value = withRepeat(
-        withSequence(
-            withTiming(scale, { duration: 2000 }),
-            withTiming(scale - 15, { duration: 2000 }),
-        ),
-        -1,
-        true
-    );
+	// Animation values
+	const radius = useSharedValue(scale);
+	radius.value = withRepeat(
+		withSequence(
+			withTiming(scale, { duration: 2000 }),
+			withTiming(scale - 15, { duration: 2000 }),
+		),
+		-1,
+		true,
+	);
 
-    return (
-        <Perspective canvasSize={canvasSize} render={(glare) => (
-            <>
-                <Rect
-                    x={canvasSize.width / 2 - rectSize.width / 2}
-                    y={canvasSize.height / 2 - rectSize.height / 2}
-                    width={rectSize.width}
-                    height={rectSize.height}
-                    color="#fff">
-
-                    <RadialGradient
-                        c={vec(canvasSize.width / 2, canvasSize.height / 2)}
-                        r={radius}
-                        colors={[color, color, backgroundColor]}
-                    />
-                </Rect>
-                <SkiaText
-                    text={formattedConsumption}
-                    font={font}
-                    x={canvasSize.width / 2 - font?.measureText(formattedConsumption).width / 2}
-                    y={canvasSize.height / 2}
-                >
-                    <Shadow dx={0} dy={0} blur={10} color={color} />
-                </SkiaText>
-            </>
-        )}>
-        </Perspective>
-    )
-}
+	return (
+		<Perspective
+			canvasSize={canvasSize}
+			render={(glare) => (
+				<>
+					<Rect
+						x={canvasSize.width / 2 - rectSize.width / 2}
+						y={canvasSize.height / 2 - rectSize.height / 2}
+						width={rectSize.width}
+						height={rectSize.height}
+						color='#fff'
+					>
+						<RadialGradient
+							c={vec(canvasSize.width / 2, canvasSize.height / 2)}
+							r={radius}
+							colors={[color, color, backgroundColor]}
+						/>
+					</Rect>
+					<SkiaText
+						text={formattedConsumption}
+						font={font}
+						x={
+							canvasSize.width / 2 -
+							font?.measureText(formattedConsumption).width / 2
+						}
+						y={canvasSize.height / 2}
+					>
+						<Shadow dx={0} dy={0} blur={10} color={color} />
+					</SkiaText>
+				</>
+			)}
+		></Perspective>
+	);
+};

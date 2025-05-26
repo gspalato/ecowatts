@@ -3,12 +3,24 @@ import { useTheme } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Dimensions, FlatList, ListRenderItemInfo, Pressable, RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import {
+	Alert,
+	Animated,
+	Dimensions,
+	FlatList,
+	ListRenderItemInfo,
+	Pressable,
+	RefreshControl,
+	SafeAreaView,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
+	SequencedTransition,
 	SharedValue,
 	useAnimatedStyle,
-	SequencedTransition
 } from 'react-native-reanimated';
 
 import HeaderContainer from '@/components/HeaderContainer';
@@ -16,15 +28,19 @@ import { IconButton } from '@/components/IconButton';
 import { PageContainer } from '@/components/PageContainer';
 import { TabPageContainer } from '@/components/TabPageContainer';
 import { ThemedText } from '@/components/ThemedText';
-import { deleteEquipment, getAllEquipment } from '@/lib/supabase';
+
 import { calculateApplicanceConsumption, formatWattHours } from '@/lib/inmetro';
-import { Database } from '@/database.types';
+import { deleteEquipment, getAllEquipment } from '@/lib/supabase';
+
 import { useThemeColor } from '@/hooks/useThemeColor';
 
-type ApplianceType = Database["public"]["Tables"]["equipment"]["Row"];
-type HydratedApplianceType = Database["public"]["Tables"]["equipment"]["Row"] & {
-	consumption: number;
-};
+import { Database } from '@/database.types';
+
+type ApplianceType = Database['public']['Tables']['equipment']['Row'];
+type HydratedApplianceType =
+	Database['public']['Tables']['equipment']['Row'] & {
+		consumption: number;
+	};
 
 const rowTranslateAnimatedValues: { [key: string]: any } = {};
 
@@ -55,7 +71,7 @@ const Page = () => {
 
 	const isAnimationRunning = useRef<{ [key: string]: boolean }>({});
 
-	const deleteSelectedEquipement = async (id: ApplianceType["id"]) => {
+	const deleteSelectedEquipement = async (id: ApplianceType['id']) => {
 		console.log('trying to delete equipment with id:', id);
 
 		try {
@@ -88,10 +104,23 @@ const Page = () => {
 			<Reanimated.FlatList
 				itemLayoutAnimation={SequencedTransition}
 				refreshControl={
-					<RefreshControl refreshing={refreshing} onRefresh={fetchData} />
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={fetchData}
+					/>
 				}
-				data={appliances.map(app => ({ ...app, consumption: calculateApplicanceConsumption(app, 'daily') })) as HydratedApplianceType[]}
-				renderItem={(item: ListRenderItemInfo<HydratedApplianceType>) => (
+				data={
+					appliances.map((app) => ({
+						...app,
+						consumption: calculateApplicanceConsumption(
+							app,
+							'daily',
+						),
+					})) as HydratedApplianceType[]
+				}
+				renderItem={(
+					item: ListRenderItemInfo<HydratedApplianceType>,
+				) => (
 					<Swipeable
 						key={item.item.id}
 						containerStyle={[
@@ -112,23 +141,45 @@ const Page = () => {
 						]}
 						rightThreshold={40}
 						enableTrackpadTwoFingerGesture
-						renderRightActions={(prog: SharedValue<number>, drag: SharedValue<number>) => {
+						renderRightActions={(
+							prog: SharedValue<number>,
+							drag: SharedValue<number>,
+						) => {
 							const styleAnimation = useAnimatedStyle(() => {
 								return {
-									transform: [{ translateX: drag.value + 70 }],
+									transform: [
+										{ translateX: drag.value + 70 },
+									],
 								};
 							});
 
 							return (
-								<Reanimated.View style={[styleAnimation, styles.rightAction]}>
+								<Reanimated.View
+									style={[styleAnimation, styles.rightAction]}
+								>
 									<Pressable
-										style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+										style={{
+											flex: 1,
+											display: 'flex',
+											flexDirection: 'column',
+											justifyContent: 'center',
+										}}
 										onPress={async () => {
-											const success = await deleteSelectedEquipement(item.item.id);
+											const success =
+												await deleteSelectedEquipement(
+													item.item.id,
+												);
 											if (success) {
-												setAppliances((prev) => prev.filter((appliance) => appliance.id !== item.item.id));
+												setAppliances((prev) =>
+													prev.filter(
+														(appliance) =>
+															appliance.id !==
+															item.item.id,
+													),
+												);
 											}
-										}}>
+										}}
+									>
 										<ThemedText
 											type='default'
 											style={{
@@ -138,14 +189,15 @@ const Page = () => {
 												lineHeight: 50,
 												padding: 2,
 												verticalAlign: 'middle',
-											}}>
+											}}
+										>
 											Excluir
 										</ThemedText>
 									</Pressable>
 								</Reanimated.View>
 							);
-						}}>
-
+						}}
+					>
 						<View
 							style={{
 								display: 'flex',
@@ -183,7 +235,10 @@ const Page = () => {
 								width: '100%',
 							}}
 						>
-							<ThemedText type='small' style={{ maxWidth: '35%' }}>
+							<ThemedText
+								type='small'
+								style={{ maxWidth: '35%' }}
+							>
 								{item.item.brand} {item.item.model}
 							</ThemedText>
 							<ThemedText type='small'>
@@ -209,6 +264,8 @@ export default Page;
 
 const styles = StyleSheet.create({
 	rightAction: {
-		width: 70, height: '100%', backgroundColor: 'red'
+		width: 70,
+		height: '100%',
+		backgroundColor: 'red',
 	},
-})
+});

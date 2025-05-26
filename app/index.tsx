@@ -50,7 +50,7 @@ export default function Auth() {
 
 		if (error) {
 			Alert.alert(error.message);
-			console.log(error)
+			console.log(error);
 		} else {
 			router.replace('/(auth)/(tabs)/home');
 		}

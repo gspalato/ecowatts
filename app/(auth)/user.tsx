@@ -1,9 +1,8 @@
-import { SafeAreaView, View } from 'react-native';
+import React from 'react';
 
 import { PageContainer } from '@/components/PageContainer';
 import SafeView from '@/components/SafeView';
 import StackPageHeader from '@/components/StackPageHeader';
-import React from 'react';
 
 const Page = () => {
 	return (

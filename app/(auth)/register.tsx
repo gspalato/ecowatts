@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -8,7 +9,6 @@ import { ThemedSafeView } from '@/components/ThemedSafeView';
 import { ThemedText } from '@/components/ThemedText';
 
 import { APPLIANCES } from '@/constants/Appliance';
-import React from 'react';
 
 const Page = () => {
 	const router = useRouter();

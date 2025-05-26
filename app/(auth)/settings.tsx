@@ -1,35 +1,42 @@
-import { SafeAreaView, TextInput, View, StyleSheet, FlatList } from 'react-native';
-import SafeView from '@/components/SafeView';
-
-import { PageContainer } from '@/components/PageContainer';
-import HeaderContainer from '@/components/HeaderContainer'
-import React from 'react';
-import { ThemedText } from '@/components/ThemedText';
-import { IconButton } from '@/components/IconButton';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Button } from '@/components/Button';
-import StackPageHeader from '@/components/StackPageHeader';
-import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
+import React from 'react';
+import {
+	FlatList,
+	SafeAreaView,
+	StyleSheet,
+	TextInput,
+	View,
+} from 'react-native';
+
+import { Button } from '@/components/Button';
+import HeaderContainer from '@/components/HeaderContainer';
+import { IconButton } from '@/components/IconButton';
+import { PageContainer } from '@/components/PageContainer';
+import SafeView from '@/components/SafeView';
+import StackPageHeader from '@/components/StackPageHeader';
+import { ThemedText } from '@/components/ThemedText';
+
+import { supabase } from '@/lib/supabase';
 
 const settingsOptions = [
 	{
 		id: 1,
 		text: 'Aparência',
-		icon: 'eye-outline'
+		icon: 'eye-outline',
 	},
 	{
 		id: 2,
 		text: 'Sobre',
-		icon: 'information-circle-outline'
+		icon: 'information-circle-outline',
 	},
 	{
 		id: 3,
 		text: 'Ajuda & Suporte',
 		icon: 'headset',
 	},
-]
+];
 
 const Page = () => {
 	const [query, setQuery] = React.useState<string | undefined>(undefined);
@@ -37,54 +44,73 @@ const Page = () => {
 	return (
 		<SafeView style={{ flex: 1, backgroundColor: '#F2F2F5' }}>
 			<PageContainer>
-				<StackPageHeader title="Configurações" />
+				<StackPageHeader title='Configurações' />
 				<View style={styles.searchContainer}>
 					<View style={styles.searchInputContainer}>
-						<Ionicons
-							name='search'
-							size={20}
-							color='#ccc'
-						/>
+						<Ionicons name='search' size={20} color='#ccc' />
 						<TextInput
 							style={styles.searchInput}
 							placeholder={`Procure por um configuração`}
 							onChangeText={(text) => setQuery(text)}
-						>
-						</TextInput>
+						></TextInput>
 					</View>
 				</View>
 				<FlatList
-					data={!query ? settingsOptions : settingsOptions.filter((item) => item.text.toLowerCase().includes(query.toLowerCase()))}
-
+					data={
+						!query
+							? settingsOptions
+							: settingsOptions.filter((item) =>
+									item.text
+										.toLowerCase()
+										.includes(query.toLowerCase()),
+								)
+					}
 					renderItem={({ item }) => (
 						<View style={styles.settingContainer}>
 							<View style={styles.buttonSetting}>
-								<View style={{
-									display: 'flex',
-									flexDirection: 'row',
-									alignItems: 'center',
-									gap: 10,
-								}}>
-									<Ionicons name={item.icon as any} size={24} color="#FF6B00" />
-									<ThemedText type='default' style={{ color: '#363841' }}>
+								<View
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center',
+										gap: 10,
+									}}
+								>
+									<Ionicons
+										name={item.icon as any}
+										size={24}
+										color='#FF6B00'
+									/>
+									<ThemedText
+										type='default'
+										style={{ color: '#363841' }}
+									>
 										{item.text}
 									</ThemedText>
 								</View>
-								<View style={{
-									alignItems: 'center',
-									justifyContent: 'center',
-								}}>
-									<Ionicons name="arrow-forward-outline" size={18} color="#6A6C79" />
+								<View
+									style={{
+										alignItems: 'center',
+										justifyContent: 'center',
+									}}
+								>
+									<Ionicons
+										name='arrow-forward-outline'
+										size={18}
+										color='#6A6C79'
+									/>
 								</View>
 							</View>
 						</View>
 					)}
 				/>
-				<View style={{
-					width: '100%',
-					position: 'absolute',
-					bottom: 0,
-				}}>
+				<View
+					style={{
+						width: '100%',
+						position: 'absolute',
+						bottom: 0,
+					}}
+				>
 					<Button
 						text='Sair'
 						textType='default'
@@ -100,14 +126,17 @@ const Page = () => {
 						textProps={{
 							style: {
 								fontSize: 18,
-							}
+							},
 						}}
 						onPress={() => {
-							supabase.auth.signOut().then(() => {
-								router.navigate('/');
-							}).catch((error) => {
-								console.error('Erro ao sair:', error);
-							});
+							supabase.auth
+								.signOut()
+								.then(() => {
+									router.navigate('/');
+								})
+								.catch((error) => {
+									console.error('Erro ao sair:', error);
+								});
 						}}
 					/>
 				</View>
@@ -157,4 +186,4 @@ const styles = StyleSheet.create({
 		borderColor: 'rgba(105, 105, 105, 0.2)',
 		marginBottom: 10,
 	},
-})	
+});

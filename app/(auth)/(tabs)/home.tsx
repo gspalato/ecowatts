@@ -1,40 +1,48 @@
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Platform, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Pressable } from 'react-native-gesture-handler';
-import { SelectList } from 'react-native-dropdown-select-list';
 import {
 	Canvas,
-	Rect,
-	LinearGradient,
-	Skia,
-	Shader,
-	vec,
-	RadialGradient,
-	Group,
-	useFont,
-	Text as SkiaText,
-	RoundedRect,
 	Fill,
+	Group,
+	LinearGradient,
+	Mask,
 	matchFont,
-	Mask
-} from "@shopify/react-native-skia";
+	RadialGradient,
+	Rect,
+	RoundedRect,
+	Shader,
+	Skia,
+	Text as SkiaText,
+	useFont,
+	vec,
+} from '@shopify/react-native-skia';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import React from 'react';
+import {
+	Platform,
+	RefreshControl,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
+import { SelectList } from 'react-native-dropdown-select-list';
+import { Pressable } from 'react-native-gesture-handler';
 
 import { IconButton } from '@/components/IconButton';
 import Logo from '@/components/Logo';
+import { Perspective } from '@/components/Perspective';
 import { TabPageContainer } from '@/components/TabPageContainer';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { UsageDisplay } from '@/components/UsageDisplay';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
-import React from 'react';
+import { kWHPrice } from '@/lib/energySupplier';
 import { calculateTotalConsumption, formatWattHours } from '@/lib/inmetro';
 import { getAllEquipment } from '@/lib/supabase';
-import { kWHPrice } from '@/lib/energySupplier';
-import { Perspective } from '@/components/Perspective';
-import { UsageDisplay } from '@/components/UsageDisplay';
+
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 const Home = () => {
 	const router = useRouter();
@@ -47,7 +55,7 @@ const Home = () => {
 		useState<'hourly' | 'daily' | 'monthly' | 'annualy'>('monthly');
 
 	const [equipment, setEquipment] = useState<any[]>([]);
-	const [consumption, setConsumption] = useState<number>(0)
+	const [consumption, setConsumption] = useState<number>(0);
 
 	const [refreshing, setRefreshing] = useState(false);
 	const refresh = async () => {
@@ -57,19 +65,19 @@ const Home = () => {
 
 		await recalculateConsumption(selectedConsumptionTimespan);
 		setRefreshing(false);
-	}
+	};
 
-	const recalculateConsumption = async (timespan: 'hourly' | 'daily' | 'monthly' | 'annualy' = 'monthly') => {
-		const consumption = await calculateTotalConsumption(
-			timespan
-		);
-		console.log(consumption)
+	const recalculateConsumption = async (
+		timespan: 'hourly' | 'daily' | 'monthly' | 'annualy' = 'monthly',
+	) => {
+		const consumption = await calculateTotalConsumption(timespan);
+		console.log(consumption);
 		setConsumption(consumption ?? 0);
-	}
+	};
 
 	useEffect(() => {
 		refresh();
-	}, [selectedConsumptionTimespan])
+	}, [selectedConsumptionTimespan]);
 
 	const formattedConsumption = formatWattHours(consumption);
 
@@ -120,7 +128,10 @@ const Home = () => {
 			</View>
 			<ScrollView
 				refreshControl={
-					<RefreshControl refreshing={refreshing} onRefresh={refresh} />
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={refresh}
+					/>
 				}
 				style={{
 					borderRadius: 10,
@@ -156,11 +167,21 @@ const Home = () => {
 						<View style={{ flexDirection: 'row' }}>
 							<ThemedText style={{ color: '#666' }}>
 								Descubra o{' '}
-								<ThemedText style={{ color: '#FF6B00', fontFamily: 'Inter_500Medium' }}>
+								<ThemedText
+									style={{
+										color: '#FF6B00',
+										fontFamily: 'Inter_500Medium',
+									}}
+								>
 									consumo
 								</ThemedText>{' '}
 								de cada equipamento e veja como{' '}
-								<ThemedText style={{ color: '#FF6B00', fontFamily: 'Inter_500Medium' }}>
+								<ThemedText
+									style={{
+										color: '#FF6B00',
+										fontFamily: 'Inter_500Medium',
+									}}
+								>
 									economizar energia
 								</ThemedText>{' '}
 								de forma inteligente!
@@ -188,11 +209,18 @@ const Home = () => {
 							zIndex: 50,
 						}}
 					>
-						<ThemedText type='title' style={{ fontSize: 20, alignSelf: 'center' }}>
+						<ThemedText
+							type='title'
+							style={{ fontSize: 20, alignSelf: 'center' }}
+						>
 							Consumo Geral
 						</ThemedText>
 						<SelectList
-							onSelect={() => recalculateConsumption(selectedConsumptionTimespan)}
+							onSelect={() =>
+								recalculateConsumption(
+									selectedConsumptionTimespan,
+								)
+							}
 							setSelected={setSelectedConsumptionTimespan}
 							data={[
 								{ key: 'hourly', value: 'Horário' },
@@ -202,7 +230,7 @@ const Home = () => {
 							]}
 							defaultOption={{ key: 'monthly', value: 'Mensal' }}
 							placeholder='Mensal'
-							save="key"
+							save='key'
 							search={false}
 							fontFamily='Outfit_500Medium'
 							boxStyles={{
@@ -225,13 +253,20 @@ const Home = () => {
 								position: 'absolute',
 								top: 25,
 								width: 100,
-								zIndex: 10
+								zIndex: 10,
 							}}
-
 						/>
 					</View>
 
-					<View style={{ alignItems: 'center', marginTop: 20, width: '100%', height: 230, marginHorizontal: 'auto' }}>
+					<View
+						style={{
+							alignItems: 'center',
+							marginTop: 20,
+							width: '100%',
+							height: 230,
+							marginHorizontal: 'auto',
+						}}
+					>
 						<UsageDisplay consumption={consumption} />
 					</View>
 
@@ -245,16 +280,18 @@ const Home = () => {
 							gap: 10,
 						}}
 					>
-						<View style={{
-							alignItems: 'center',
-							backgroundColor: '#fff',
-							borderColor,
-							borderWidth: StyleSheet.hairlineWidth,
-							borderRadius: 10,
-							padding: 10,
-							paddingVertical: 15,
-							width: 175,
-						}}>
+						<View
+							style={{
+								alignItems: 'center',
+								backgroundColor: '#fff',
+								borderColor,
+								borderWidth: StyleSheet.hairlineWidth,
+								borderRadius: 10,
+								padding: 10,
+								paddingVertical: 15,
+								width: 175,
+							}}
+						>
 							<ThemedText
 								type='title'
 								style={{
@@ -272,16 +309,18 @@ const Home = () => {
 								{equipment.length}
 							</ThemedText>
 						</View>
-						<View style={{
-							alignItems: 'center',
-							backgroundColor: '#fff',
-							borderColor,
-							borderWidth: StyleSheet.hairlineWidth,
-							borderRadius: 10,
-							padding: 10,
-							paddingVertical: 15,
-							width: 175
-						}}>
+						<View
+							style={{
+								alignItems: 'center',
+								backgroundColor: '#fff',
+								borderColor,
+								borderWidth: StyleSheet.hairlineWidth,
+								borderRadius: 10,
+								padding: 10,
+								paddingVertical: 15,
+								width: 175,
+							}}
+						>
 							<ThemedText
 								type='title'
 								style={{
@@ -296,7 +335,11 @@ const Home = () => {
 								type='defaultSemiBold'
 								style={{ fontSize: 20 }}
 							>
-								R${((consumption ?? 0) / 1000 * kWHPrice.elektro).toFixed(2)}
+								R$
+								{(
+									((consumption ?? 0) / 1000) *
+									kWHPrice.elektro
+								).toFixed(2)}
 							</ThemedText>
 						</View>
 					</View>
