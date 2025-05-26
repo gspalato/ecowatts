@@ -97,31 +97,35 @@ const ApplianceDetailsPage = () => {
 										{typeDisplayName?.toLowerCase()}.
 									</Text>
 									<View style={{ flexDirection: 'row', flex: 1, gap: 5 }}>
-										<View style={styles.searchInputContainer}>
-											<Ionicons
-												name='search'
-												size={20}
-												color='#ccc'
-											/>
-											<TextInput
-												style={styles.searchInput}
-												placeholder={`Marca`}
-												//value={brandSearchDisplayQuery}
-												onChangeText={(t) => setBrandSearchQuery(t)}
-											/>
+										<View style={[styles.inputGroup, { flex: .5 }]} key="brand">
+											<Text style={styles.label}>Marca</Text>
+											<View style={styles.searchInputContainer}>
+												<Ionicons
+													name='search'
+													size={20}
+													color='#ccc'
+												/>
+												<TextInput
+													style={styles.searchInput}
+													placeholder={`Marca`}
+													onChangeText={(t) => setBrandSearchQuery(t)}
+												/>
+											</View>
 										</View>
-										<View style={styles.searchInputContainer}>
-											<Ionicons
-												name='search'
-												size={20}
-												color='#ccc'
-											/>
-											<TextInput
-												style={styles.searchInput}
-												placeholder={`Modelo`}
-												//value={modelSearchDisplayQuery}
-												onChangeText={(t) => setModelSearchQuery(t)}
-											/>
+										<View style={[styles.inputGroup, { flex: .5 }]} key="model">
+											<Text style={styles.label}>Modelo</Text>
+											<View style={styles.searchInputContainer}>
+												<Ionicons
+													name='search'
+													size={20}
+													color='#ccc'
+												/>
+												<TextInput
+													style={styles.searchInput}
+													placeholder={`Modelo`}
+													onChangeText={(t) => setModelSearchQuery(t)}
+												/>
+											</View>
 										</View>
 									</View>
 									<ScrollView style={{ display: hasSearch ? 'flex' : 'none', flex: 1 }}>
@@ -203,13 +207,11 @@ const ApplianceDetailsPage = () => {
 								</View>
 							))}
 							<Button text='Adicionar' type='primary' onPress={() => {
-								console.log('le manual input', encodeURIComponent(JSON.stringify(manualInput)));
-
 								pushEquipment(manualInput['name'], manualInput['location'], manualInput, {}, true)
 									.then(() => {
 										router.push({ pathname: '/(auth)/(tabs)/appliances', params: {} });
 									})
-							}}></Button>
+							}} />
 						</View>
 					</ScrollView>
 				</KeyboardAvoidingView>
@@ -286,7 +288,6 @@ const styles = StyleSheet.create({
 		marginBottom: 8,
 	},
 	input: {
-		//backgroundColor: '#F2F2F7',
 		borderRadius: 8,
 		padding: 12,
 		fontSize: 16,
