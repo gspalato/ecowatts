@@ -97,7 +97,6 @@ const Page = () => {
 						containerStyle={[
 							{
 								width: '100%',
-								//height: 150,
 								padding: 20,
 								borderRadius: 0,
 								marginBottom: 10,
@@ -116,7 +115,7 @@ const Page = () => {
 						renderRightActions={(prog: SharedValue<number>, drag: SharedValue<number>) => {
 							const styleAnimation = useAnimatedStyle(() => {
 								return {
-									transform: [{ translateX: drag.value + 50 }],
+									transform: [{ translateX: drag.value + 70 }],
 								};
 							});
 
@@ -210,6 +209,6 @@ export default Page;
 
 const styles = StyleSheet.create({
 	rightAction: {
-		width: 50, height: '100%', backgroundColor: 'red'
+		width: 70, height: '100%', backgroundColor: 'red'
 	},
 })
