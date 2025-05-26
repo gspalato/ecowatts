@@ -18,15 +18,23 @@ import {
     vec,
     Text as SkiaText,
     useFont,
+    processTransform3d,
+    toMatrix3,
+    Skia,
+    Circle
 } from '@shopify/react-native-skia';
 import { PropsWithChildren, useCallback } from 'react';
 
 import React from 'react';
+import { useTheme } from '@react-navigation/native';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 const SquareSize = 170;
 
-export const Perspective: React.FC<{ canvasSize: { width: number, height: number } } & PropsWithChildren> = (props) => {
-    const { children, canvasSize } = props;
+export const Perspective: React.FC<{ canvasSize: { width: number, height: number }, render: (light: React.ReactNode) => React.ReactNode | undefined }> = (props) => {
+    const { render, canvasSize } = props;
+
+    const backgroundColor = useThemeColor({}, 'background');
 
     const CanvasCenter = vec(canvasSize.width / 2, canvasSize.height / 2);
 
@@ -39,70 +47,83 @@ export const Perspective: React.FC<{ canvasSize: { width: number, height: number
 
         return interpolate(
             roll,
-            [-1, 0, 1],
-            [Math.PI / 8, 0, -Math.PI / 8],
+            [-Math.PI, Math.PI],
+            [(40 * Math.PI / 180), (-40 * Math.PI / 180)],
             Extrapolation.CLAMP,
         );
     });
 
-    const rotationGravity = useAnimatedSensor(SensorType.GRAVITY, {
-        interval: 1 / 120,
+    const lightY = useDerivedValue(() => {
+        const { pitch } = deviceRotation.sensor.value;
+
+        return interpolate(
+            pitch,
+            [-Math.PI, Math.PI],
+            [-500 * 2, 500 * 2]
+        );
     });
 
     const rotateX = useDerivedValue(() => {
-        const { z } = rotationGravity.sensor.value;
+        const { pitch } = deviceRotation.sensor.value;
 
         return interpolate(
-            z,
-            [-10, -6, -1],
-            [-Math.PI / 8, 0, Math.PI / 8],
+            pitch,
+            [-Math.PI, Math.PI],
+            [(40 * Math.PI / 180), (-40 * Math.PI / 180)],
             Extrapolation.CLAMP,
+        );
+    });
+
+    const lightX = useDerivedValue(() => {
+        const { roll } = deviceRotation.sensor.value;
+
+        return interpolate(
+            roll,
+            [-Math.PI, Math.PI],
+            [-500 * 2, 500 * 2]
         );
     });
 
     const rTransform = useDerivedValue(() => {
         return [
             { perspective: 300 },
-            { rotateY: -rotateY.value },
+            { rotateY: rotateY.value },
             { rotateX: rotateX.value },
         ];
     });
 
-    const shadowDx = useDerivedValue(() => {
-        return interpolate(
-            rotateY.value,
-            [-Math.PI / 8, 0, Math.PI / 8],
-            [10, 0, -10],
-            Extrapolation.CLAMP,
-        );
-    });
-
-    const shadowDy = useDerivedValue(() => {
-        return interpolate(
-            rotateX.value,
-            [-Math.PI / 8, 0, Math.PI / 8],
-            // Exception instead of (-10 use 7) that's because the "light source" is on the top
-            [7, 0, 10],
-            Extrapolation.CLAMP,
-        );
-    });
-
-    const GoodOldSquare = useCallback(
-        ({ children }: { children?: React.ReactNode }) => {
-            return (
-                <RoundedRect
-                    x={canvasSize.width / 2 - SquareSize / 2}
-                    y={canvasSize.height / 2 - SquareSize / 2}
-                    width={SquareSize}
-                    height={SquareSize}
-                    color="#10101044"
-                    r={35}>
-                    {children}
-                </RoundedRect>
-            );
-        },
-        [],
+    const lightTransform = useDerivedValue(
+        () => [
+            { translateX: lightX.value },
+            { translateY: lightY.value },
+        ],
+        [lightX, lightY]
     );
+
+    const transformMatrix = useDerivedValue(() => {
+        const mat3 = toMatrix3(processTransform3d([
+            { perspective: 300 },
+            { rotateY: rotateY.value },
+            { rotateX: rotateX.value },
+        ]));
+
+        return Skia.Matrix(mat3);
+    }, [rotateX, rotateY]);
+
+    const lightXOrigin = canvasSize.width / 2;
+    const lightYOrigin = canvasSize.height / 2;
+
+    const light =
+        (<Group origin={vec(lightXOrigin, lightYOrigin)} transform={lightTransform} blendMode="plus">
+            <Circle cy={lightYOrigin} cx={lightXOrigin} r={20}>
+                <RadialGradient
+                    c={vec(lightXOrigin, lightYOrigin)}
+                    r={20}
+                    mode="clamp"
+                    colors={["rgba(255,255,255,0.1)", "rgba(255,255,255,0.005)"]}
+                />
+            </Circle>
+        </Group>);
 
     return (
         <View style={styles.fill}>
@@ -112,18 +133,8 @@ export const Perspective: React.FC<{ canvasSize: { width: number, height: number
                         height: canvasSize.height,
                         width: canvasSize.width,
                     }}>
-                    <Group origin={CanvasCenter} transform={rTransform}>
-                        {children}
-                        {/*
-                        <Group>
-                            <GoodOldSquare>
-                                {children}
-                            </GoodOldSquare>
-                            
-                            <Shadow color="#4c4c4c" inner blur={0} dx={0} dy={0.8} />
-                            <Shadow color="#000000" blur={3.5} dx={shadowDx} dy={shadowDy} />
-                        </Group>
-                        */}
+                    <Group origin={CanvasCenter} /*transform={rTransform}*/ matrix={transformMatrix}>
+                        {render(light)}
                     </Group>
                 </Canvas>
             </View>

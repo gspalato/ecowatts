@@ -163,6 +163,7 @@ const Page = () => {
 							>
 								{item.item.name}
 							</ThemedText>
+							{/*
 							<View style={{}}>
 								<ThemedText
 									type='defaultSemiBold'
@@ -171,6 +172,7 @@ const Page = () => {
 									{item.item.location || 'Local Indefinido'}
 								</ThemedText>
 							</View>
+							*/}
 						</View>
 						<View
 							style={{

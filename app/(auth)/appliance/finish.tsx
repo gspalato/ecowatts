@@ -120,6 +120,7 @@ const ApplianceFinishPage = () => {
                                 }}
                             />
                         </View>
+                        {/*
                         <View style={styles.inputGroup} key={'location'}>
                             <Text style={styles.label}>Local da casa</Text>
                             {
@@ -148,6 +149,7 @@ const ApplianceFinishPage = () => {
                                 )
                             }
                         </View>
+                        */}
                         <View style={{ flexDirection: 'column', flex: 1, gap: 5 }}>
                             {unfilledRequiredFields.map(([key, value]) => (
                                 <View style={styles.inputGroup} key={value.name}>

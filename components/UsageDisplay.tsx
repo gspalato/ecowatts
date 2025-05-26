@@ -17,6 +17,9 @@ import {
     useClock,
     Shader,
     Blend,
+    LinearGradient,
+    Group,
+    Shadow,
 } from "@shopify/react-native-skia";
 import React from "react";
 import { formatWattHours } from "@/lib/inmetro";
@@ -111,7 +114,7 @@ export const UsageDisplay = (props: { consumption: number }) => {
     const scale = interpolate(
         props.consumption,
         [0, 875 * 1000, 1200 * 1000],
-        [115, 125, rectSize.height / 2],
+        [115, 125, rectSize.height / 2 - 15],
         Extrapolation.CLAMP,
     );
 
@@ -133,37 +136,38 @@ export const UsageDisplay = (props: { consumption: number }) => {
     radius.value = withRepeat(
         withSequence(
             withTiming(scale, { duration: 2000 }),
-            withTiming(scale * 0.9, { duration: 2000 }),
+            withTiming(scale - 15, { duration: 2000 }),
         ),
         -1,
         true
     );
 
     return (
-        <Perspective canvasSize={canvasSize}>
-            <Rect
-                x={canvasSize.width / 2 - rectSize.width / 2}
-                y={canvasSize.height / 2 - rectSize.height / 2}
-                width={rectSize.width}
-                height={rectSize.height}
-                color="#ffffff">
+        <Perspective canvasSize={canvasSize} render={(glare) => (
+            <>
+                <Rect
+                    x={canvasSize.width / 2 - rectSize.width / 2}
+                    y={canvasSize.height / 2 - rectSize.height / 2}
+                    width={rectSize.width}
+                    height={rectSize.height}
+                    color="#fff">
 
-                <RadialGradient
-                    c={vec(canvasSize.width / 2, canvasSize.height / 2)}
-                    r={radius}
-                    colors={[color, color, backgroundColor]}
-                />
-            </Rect>
-            <Mask mask={
+                    <RadialGradient
+                        c={vec(canvasSize.width / 2, canvasSize.height / 2)}
+                        r={radius}
+                        colors={[color, color, backgroundColor]}
+                    />
+                </Rect>
                 <SkiaText
                     text={formattedConsumption}
                     font={font}
                     x={canvasSize.width / 2 - font?.measureText(formattedConsumption).width / 2}
                     y={canvasSize.height / 2}
-                />
-            }>
-                <Fill color="#000" />
-            </Mask>
-        </Perspective >
+                >
+                    <Shadow dx={0} dy={0} blur={10} color={color} />
+                </SkiaText>
+            </>
+        )}>
+        </Perspective>
     )
 }
