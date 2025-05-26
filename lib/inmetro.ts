@@ -52,12 +52,6 @@ export const applianceTypeAttributeMap = {
 	fridge: {
 		monthly_consumption_kwh: { code: 493, name: 'Consumo médio mensal de energia (kWh)' },
 	},
-	//ceiling_fan: {
-	//	daily_standby_consumption_kwh: 216
-	//},
-	//standing_fan: {
-	//	daily_standby_consumption_kwh: 216
-	//},
 }
 
 const propertyMap = {
@@ -97,6 +91,9 @@ export const convertToDatabaseSchema = (applianceData: InmetroData, manuallyFill
 	const obj: { [key: string]: any } = {}
 
 	const applianceTypeCode = applianceData['idPrograma'];
+	const applianceBrandAlternative = applianceData['nomeMarca'] || '';
+	const applianceModelAlternative = applianceData['nomeModelo'] || '';
+
 	const applianceType = Object.entries(applianceTypeMap).find(([key, value]) => value === applianceTypeCode)?.[0];
 
 	const fields = Object.entries(applianceTypeAttributeMap[applianceType as keyof typeof applianceTypeAttributeMap] ?? {});
@@ -107,6 +104,13 @@ export const convertToDatabaseSchema = (applianceData: InmetroData, manuallyFill
 			|| manuallyFilledFields[String(value.code)];
 
 		obj[key] = attribute;
+
+		// Manually fill brand and model if they are only present outside the "attributes" object.
+		if (key === 'brand' && !obj[key]) {
+			obj[key] = applianceBrandAlternative;
+		} else if (key === 'model' && !obj[key]) {
+			obj[key] = applianceModelAlternative;
+		}
 	});
 
 	return obj
@@ -143,11 +147,15 @@ export const formatWattHours = (wattHours: number): string => {
 	}
 };
 
+/**
+ * Calculate the consumption of an appliance based on the time period.
+ * @param time - The time period to calculate the consumption for. Can be 'hourly', 'daily', 'monthly' or 'annualy'.
+ * @returns The consumption of this appliances in watt-hours (Wh).
+ */
 export const calculateApplicanceConsumption = (
 	appliance: Database['public']['Tables']['equipment']['Row'],
 	time: 'hourly' | 'daily' | 'monthly' | 'annualy'
 ): number => {
-	console.log('recalculating consumption for', appliance, time);
 	let consumptionWh = 0; // Working in watt-hours
 
 	if (appliance.monthly_consumption_kwh) {
@@ -223,7 +231,7 @@ export const calculateApplicanceConsumption = (
 };
 
 /**
- * Calculate the consumption of all appliances based on the time.
+ * Calculate the consumption of all appliances based on the time period.
  * @param time - The time period to calculate the consumption for. Can be 'hourly', 'daily', 'monthly' or 'annualy'.
  * @returns The total consumption of all appliances in watt-hours (Wh).
  */
