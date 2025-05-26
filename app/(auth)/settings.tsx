@@ -10,8 +10,30 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Button } from '@/components/Button';
 import StackPageHeader from '@/components/StackPageHeader';
+import { supabase } from '@/lib/supabase';
+import { router } from 'expo-router';
+
+const settingsOptions = [
+	{
+		id: 1,
+		text: 'Aparência',
+		icon: 'eye-outline'
+	},
+	{
+		id: 2,
+		text: 'Sobre',
+		icon: 'information-circle-outline'
+	},
+	{
+		id: 3,
+		text: 'Ajuda & Suporte',
+		icon: 'headset',
+	},
+]
 
 const Page = () => {
+	const [query, setQuery] = React.useState<string | undefined>(undefined);
+
 	return (
 		<SafeView style={{ flex: 1, backgroundColor: '#F2F2F5' }}>
 			<PageContainer>
@@ -26,28 +48,13 @@ const Page = () => {
 						<TextInput
 							style={styles.searchInput}
 							placeholder={`Procure por um configuração`}
+							onChangeText={(text) => setQuery(text)}
 						>
 						</TextInput>
 					</View>
 				</View>
 				<FlatList
-					data={[
-						{
-							id: 1,
-							text: 'Aparência',
-							icon: 'eye-outline'
-						},
-						{
-							id: 2,
-							text: 'Sobre',
-							icon: 'information-circle-outline'
-						},
-						{
-							id: 3,
-							text: 'Ajuda & Suporte',
-							icon: 'headset',
-						},
-					]}
+					data={!query ? settingsOptions : settingsOptions.filter((item) => item.text.toLowerCase().includes(query.toLowerCase()))}
 
 					renderItem={({ item }) => (
 						<View style={styles.settingContainer}>
@@ -94,6 +101,13 @@ const Page = () => {
 							style: {
 								fontSize: 18,
 							}
+						}}
+						onPress={() => {
+							supabase.auth.signOut().then(() => {
+								router.navigate('/');
+							}).catch((error) => {
+								console.error('Erro ao sair:', error);
+							});
 						}}
 					/>
 				</View>
